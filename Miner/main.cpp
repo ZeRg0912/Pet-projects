@@ -9,12 +9,12 @@
 
 using namespace std;
 
-int HEIGHT = 20;
-int WIDTH = 30;
+int HEIGHT = 9;
+int WIDTH = 9;
 int i_start = 0;
 int j_start = 0;
 
-int NUMOFMINES = 50;
+int NUMOFMINES = 3;
 
 bool boom = false;
 bool win = false;
@@ -38,69 +38,6 @@ void CheckField_6(int** Field, int** tmpField, int i, int j);
 void CheckField_1(int** Field, int** tmpField, int i, int j);
 void CheckField_2(int** Field, int** tmpField, int i, int j);
 void CheckField_3(int** Field, int** tmpField, int i, int j);
-
-void CheckField_7_line(int** Field, int** tmpField, int i, int j);
-void CheckField_8_line(int** Field, int** tmpField, int i, int j);
-void CheckField_9_line(int** Field, int** tmpField, int i, int j);
-void CheckField_4_line(int** Field, int** tmpField, int i, int j);
-void CheckField_6_line(int** Field, int** tmpField, int i, int j);
-void CheckField_1_line(int** Field, int** tmpField, int i, int j);
-void CheckField_2_line(int** Field, int** tmpField, int i, int j);
-void CheckField_3_line(int** Field, int** tmpField, int i, int j);
-
-void CheckField_7_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_8_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_9_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_4_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_6_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_1_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_2_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_3_line_line(int** Field, int** tmpField, int i, int j);
-
-void CheckField_7_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_8_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_9_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_4_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_6_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_1_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_2_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_3_line_line_line(int** Field, int** tmpField, int i, int j);
-
-void CheckField_7_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_8_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_9_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_4_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_6_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_1_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_2_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_3_line_line_line_line(int** Field, int** tmpField, int i, int j);
-
-void CheckField_7_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_8_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_9_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_4_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_6_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_1_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_2_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_3_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-
-void CheckField_7_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_8_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_9_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_4_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_6_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_1_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_2_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_3_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-
-void CheckField_7_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_8_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_9_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_4_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_6_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_1_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_2_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
-void CheckField_3_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j);
 
 int** CreateField(int HEIGHT, int WIDTH) {
     int** Field = new int* [HEIGHT];
@@ -429,2036 +366,205 @@ void CheckField_backup(int** Field, int** tmpField, int i, int j) {
     }
 }
 
-void CheckField_7_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num7 = false;
-            i_tmp = i - 1;
-            j_tmp = j - 1;
-            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num7 = true;
-        }
-    }
-}
-
-void CheckField_8_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num8 = false;
-            i_tmp = i - 1;
-            j_tmp = j;
-            if (i > 0 && num8 == false) {
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num8 = true;
-        }
-    }
-}
-
-void CheckField_9_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num9 = false;
-            i_tmp = i - 1;
-            j_tmp = j + 1;
-            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num9 = true;
-        }
-    }
-}
-
-void CheckField_4_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (j >= 0) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num4 = false;
-            i_tmp = i;
-            j_tmp = j - 1;
-            if (j > 0 && num4 == false) {
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num4 = true;
-        }
-    }
-}
-
-void CheckField_6_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if (j <= WIDTH - 1) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num6 = false;
-            i_tmp = i;
-            j_tmp = j + 1;
-            if (j < WIDTH - 1 && num6 == false) {
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num6 = true;
-        }
-    }
-}
-
-void CheckField_1_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num1 = false;
-            i_tmp = i + 1;
-            j_tmp = j - 1;
-            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num1 = true;
-        }
-    }
-}
-
-void CheckField_2_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (i <= HEIGHT - 1) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num2 = false;
-            i_tmp = i + 1;
-            j_tmp = j;
-            if (i < HEIGHT - 1 && num2 == false) {
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num2 = true;
-        }
-    }
-}
-
-void CheckField_3_line_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num3 = false;
-            i_tmp = i + 1;
-            j_tmp = j + 1;
-            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num3 = true;
-        }
-    }
-}
-
-void CheckField_7_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num7 = false;
-            i_tmp = i - 1;
-            j_tmp = j - 1;
-            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num7 = true;
-        }
-    }
-}
-
-void CheckField_8_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num8 = false;
-            i_tmp = i - 1;
-            j_tmp = j;
-            if (i > 0 && num8 == false) {
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num8 = true;
-        }
-    }
-}
-
-void CheckField_9_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num9 = false;
-            i_tmp = i - 1;
-            j_tmp = j + 1;
-            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num9 = true;
-        }
-    }
-}
-
-void CheckField_4_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (j >= 0) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num4 = false;
-            i_tmp = i;
-            j_tmp = j - 1;
-            if (j > 0 && num4 == false) {
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num4 = true;
-        }
-    }
-}
-
-void CheckField_6_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if (j <= WIDTH - 1) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num6 = false;
-            i_tmp = i;
-            j_tmp = j + 1;
-            if (j < WIDTH - 1 && num6 == false) {
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num6 = true;
-        }
-    }
-}
-
-void CheckField_1_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num1 = false;
-            i_tmp = i + 1;
-            j_tmp = j - 1;
-            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num1 = true;
-        }
-    }
-}
-
-void CheckField_2_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (i <= HEIGHT - 1) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num2 = false;
-            i_tmp = i + 1;
-            j_tmp = j;
-            if (i < HEIGHT - 1 && num2 == false) {
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num2 = true;
-        }
-    }
-}
-
-void CheckField_3_line_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num3 = false;
-            i_tmp = i + 1;
-            j_tmp = j + 1;
-            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num3 = true;
-        }
-    }
-}
-
-void CheckField_7_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num7 = false;
-            i_tmp = i - 1;
-            j_tmp = j - 1;
-            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num7 = true;
-        }
-    }
-}
-
-void CheckField_8_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num8 = false;
-            i_tmp = i - 1;
-            j_tmp = j;
-            if (i > 0 && num8 == false) {
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num8 = true;
-        }
-    }
-}
-
-void CheckField_9_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num9 = false;
-            i_tmp = i - 1;
-            j_tmp = j + 1;
-            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num9 = true;
-        }
-    }
-}
-
-void CheckField_4_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (j >= 0) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num4 = false;
-            i_tmp = i;
-            j_tmp = j - 1;
-            if (j > 0 && num4 == false) {
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num4 = true;
-        }
-    }
-}
-
-void CheckField_6_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if (j <= WIDTH - 1) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num6 = false;
-            i_tmp = i;
-            j_tmp = j + 1;
-            if (j < WIDTH - 1 && num6 == false) {
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num6 = true;
-        }
-    }
-}
-
-void CheckField_1_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num1 = false;
-            i_tmp = i + 1;
-            j_tmp = j - 1;
-            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num1 = true;
-        }
-    }
-}
-
-void CheckField_2_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (i <= HEIGHT - 1) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num2 = false;
-            i_tmp = i + 1;
-            j_tmp = j;
-            if (i < HEIGHT - 1 && num2 == false) {
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num2 = true;
-        }
-    }
-}
-
-void CheckField_3_line_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num3 = false;
-            i_tmp = i + 1;
-            j_tmp = j + 1;
-            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num3 = true;
-        }
-    }
-}
-
-void CheckField_7_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num7 = false;
-            i_tmp = i - 1;
-            j_tmp = j - 1;
-            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num7 = true;
-        }
-    }
-}
-
-void CheckField_8_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num8 = false;
-            i_tmp = i - 1;
-            j_tmp = j;
-            if (i > 0 && num8 == false) {
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num8 = true;
-        }
-    }
-}
-
-void CheckField_9_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num9 = false;
-            i_tmp = i - 1;
-            j_tmp = j + 1;
-            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num9 = true;
-        }
-    }
-}
-
-void CheckField_4_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (j >= 0) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num4 = false;
-            i_tmp = i;
-            j_tmp = j - 1;
-            if (j > 0 && num4 == false) {
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num4 = true;
-        }
-    }
-}
-
-void CheckField_6_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if (j <= WIDTH - 1) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num6 = false;
-            i_tmp = i;
-            j_tmp = j + 1;
-            if (j < WIDTH - 1 && num6 == false) {
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num6 = true;
-        }
-    }
-}
-
-void CheckField_1_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num1 = false;
-            i_tmp = i + 1;
-            j_tmp = j - 1;
-            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num1 = true;
-        }
-    }
-}
-
-void CheckField_2_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (i <= HEIGHT - 1) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num2 = false;
-            i_tmp = i + 1;
-            j_tmp = j;
-            if (i < HEIGHT - 1 && num2 == false) {
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num2 = true;
-        }
-    }
-}
-
-void CheckField_3_line_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num3 = false;
-            i_tmp = i + 1;
-            j_tmp = j + 1;
-            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num3 = true;
-        }
-    }
-}
-
-void CheckField_7_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num7 = false;
-            i_tmp = i - 1;
-            j_tmp = j - 1;
-            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num7 = true;
-        }
-    }
-}
-
-void CheckField_8_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num8 = false;
-            i_tmp = i - 1;
-            j_tmp = j;
-            if (i > 0 && num8 == false) {
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num8 = true;
-        }
-    }
-}
-
-void CheckField_9_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num9 = false;
-            i_tmp = i - 1;
-            j_tmp = j + 1;
-            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num9 = true;
-        }
-    }
-}
-
-void CheckField_4_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (j >= 0) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num4 = false;
-            i_tmp = i;
-            j_tmp = j - 1;
-            if (j > 0 && num4 == false) {
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num4 = true;
-        }
-    }
-}
-
-void CheckField_6_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if (j <= WIDTH - 1) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num6 = false;
-            i_tmp = i;
-            j_tmp = j + 1;
-            if (j < WIDTH - 1 && num6 == false) {
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num6 = true;
-        }
-    }
-}
-
-void CheckField_1_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num1 = false;
-            i_tmp = i + 1;
-            j_tmp = j - 1;
-            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num1 = true;
-        }
-    }
-}
-
-void CheckField_2_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (i <= HEIGHT - 1) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num2 = false;
-            i_tmp = i + 1;
-            j_tmp = j;
-            if (i < HEIGHT - 1 && num2 == false) {
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num2 = true;
-        }
-    }
-}
-
-void CheckField_3_line_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num3 = false;
-            i_tmp = i + 1;
-            j_tmp = j + 1;
-            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num3 = true;
-        }
-    }
-}
-
-void CheckField_7_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num7 = false;
-            i_tmp = i - 1;
-            j_tmp = j - 1;
-            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num7 = true;
-        }
-    }
-}
-
-void CheckField_8_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num8 = false;
-            i_tmp = i - 1;
-            j_tmp = j;
-            if (i > 0 && num8 == false) {
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num8 = true;
-        }
-    }
-}
-
-void CheckField_9_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num9 = false;
-            i_tmp = i - 1;
-            j_tmp = j + 1;
-            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num9 = true;
-        }
-    }
-}
-
-void CheckField_4_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (j >= 0) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num4 = false;
-            i_tmp = i;
-            j_tmp = j - 1;
-            if (j > 0 && num4 == false) {
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num4 = true;
-        }
-    }
-}
-
-void CheckField_6_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if (j <= WIDTH - 1) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num6 = false;
-            i_tmp = i;
-            j_tmp = j + 1;
-            if (j < WIDTH - 1 && num6 == false) {
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num6 = true;
-        }
-    }
-}
-
-void CheckField_1_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num1 = false;
-            i_tmp = i + 1;
-            j_tmp = j - 1;
-            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num1 = true;
-        }
-    }
-}
-
-void CheckField_2_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (i <= HEIGHT - 1) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num2 = false;
-            i_tmp = i + 1;
-            j_tmp = j;
-            if (i < HEIGHT - 1 && num2 == false) {
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num2 = true;
-        }
-    }
-}
-
-void CheckField_3_line_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num3 = false;
-            i_tmp = i + 1;
-            j_tmp = j + 1;
-            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num3 = true;
-        }
-    }
-}
-
-void CheckField_7_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num7 = false;
-            i_tmp = i - 1;
-            j_tmp = j - 1;
-            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
-                CheckField_7_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num7 = true;
-        }
-    }
-}
-
-void CheckField_8_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num8 = false;
-            i_tmp = i - 1;
-            j_tmp = j;
-            if (i > 0 && num8 == false) {
-                CheckField_8_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num8 = true;
-        }
-    }
-}
-
-void CheckField_9_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num9 = false;
-            i_tmp = i - 1;
-            j_tmp = j + 1;
-            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
-                CheckField_9_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num9 = true;
-        }
-    }
-}
-
-void CheckField_4_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (j >= 0) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num4 = false;
-            i_tmp = i;
-            j_tmp = j - 1;
-            if (j > 0 && num4 == false) {
-                CheckField_4_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num4 = true;
-        }
-    }
-}
-
-void CheckField_6_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if (j <= WIDTH - 1) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num6 = false;
-            i_tmp = i;
-            j_tmp = j + 1;
-            if (j < WIDTH - 1 && num6 == false) {
-                CheckField_6_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num6 = true;
-        }
-    }
-}
-
-void CheckField_1_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num1 = false;
-            i_tmp = i + 1;
-            j_tmp = j - 1;
-            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
-                CheckField_1_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num1 = true;
-        }
-    }
-}
-
-void CheckField_2_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (i <= HEIGHT - 1) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num2 = false;
-            i_tmp = i + 1;
-            j_tmp = j;
-            if (i < HEIGHT - 1 && num2 == false) {
-                CheckField_2_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num2 = true;
-        }
-    }
-}
-
-void CheckField_3_line(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num3 = false;
-            i_tmp = i + 1;
-            j_tmp = j + 1;
-            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
-                CheckField_3_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_7_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_8_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_9_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_4_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_6_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_1_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_2_line_line(Field, tmpField, i_tmp, j_tmp);
-                CheckField_3_line_line(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num3 = true;
-        }
-    }
-}
-
 void CheckField_7(int** Field, int** tmpField, int i, int j) {
-    bool num = false;
-    while (((i >= 0) && (j >= 0)) && num == false) {
-        tmpField[i][j] == Field[i][j];
-        CheckField_7_line(Field, tmpField, i, j);
-        CheckField_8_line(Field, tmpField, i, j);
-        CheckField_9_line(Field, tmpField, i, j);
-        CheckField_4_line(Field, tmpField, i, j);
-        CheckField_6_line(Field, tmpField, i, j);
-        CheckField_1_line(Field, tmpField, i, j);
-        CheckField_2_line(Field, tmpField, i, j);
-        CheckField_3_line(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+
+    if ((i >= 0) && (j >= 0)) {
+        tmpField[i][j] = Field[i][j];
         if (tmpField[i][j] == 10) {
             boom = true;
-            num = true;
-            break;
         }
         else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
             tmpField[i][j] = 11;
-            num = false;
-            i--;
-            j--;
+            num7 = false;
+            i_tmp = i - 1;
+            j_tmp = j - 1;
+            int i_tmp_tmp = i_tmp;
+            int j_tmp_tmp = j_tmp;
+            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
+                CheckField_7(Field, tmpField, i_tmp, j_tmp);
+            }
         }
         else {
             tmpField[i][j] = Field[i][j];
-            num = true;
-            break;
+            num7 = true;
         }
     }
 }
 
 void CheckField_8(int** Field, int** tmpField, int i, int j) {
-    bool num = false;
-    while (i > 0 && num == false) {
-        tmpField[i][j] == Field[i][j];
-        CheckField_7_line(Field, tmpField, i, j);
-        CheckField_8_line(Field, tmpField, i, j);
-        CheckField_9_line(Field, tmpField, i, j);
-        CheckField_4_line(Field, tmpField, i, j);
-        CheckField_6_line(Field, tmpField, i, j);
-        CheckField_1_line(Field, tmpField, i, j);
-        CheckField_2_line(Field, tmpField, i, j);
-        CheckField_3_line(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+
+    if ((i >= 0)) {
+        tmpField[i][j] = Field[i][j];
         if (tmpField[i][j] == 10) {
             boom = true;
-            num = true;
-            break;
         }
         else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
             tmpField[i][j] = 11;
-            num = false;
-            i--;
+            num8 = false;
+            i_tmp = i - 1;
+            j_tmp = j;
+            if (i > 0 && num8 == false) {
+                CheckField_8(Field, tmpField, i_tmp, j_tmp);
+            }
         }
         else {
             tmpField[i][j] = Field[i][j];
-            num = true;
-            break;
+            num8 = true;
         }
     }
 }
 
 void CheckField_9(int** Field, int** tmpField, int i, int j) {
-    bool num = false;
-    while (((i > 0) && (j < WIDTH - 1)) && num == false) {
-        tmpField[i][j] == Field[i][j];
-        CheckField_7_line(Field, tmpField, i, j);
-        CheckField_8_line(Field, tmpField, i, j);
-        CheckField_9_line(Field, tmpField, i, j);
-        CheckField_4_line(Field, tmpField, i, j);
-        CheckField_6_line(Field, tmpField, i, j);
-        CheckField_1_line(Field, tmpField, i, j);
-        CheckField_2_line(Field, tmpField, i, j);
-        CheckField_3_line(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+
+    if ((i >= 0) && (j <= WIDTH - 1)) {
+        tmpField[i][j] = Field[i][j];
         if (tmpField[i][j] == 10) {
             boom = true;
-            num = true;
-            break;
         }
         else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
             tmpField[i][j] = 11;
-            num = false;
-            i--;
+            num9 = false;
+            i_tmp = i - 1;
+            j_tmp = j + 1;
+            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
+                CheckField_9(Field, tmpField, i_tmp, j_tmp);
+            }
         }
         else {
             tmpField[i][j] = Field[i][j];
-            num = true;
-            break;
+            num9 = true;
         }
     }
 }
 
 void CheckField_4(int** Field, int** tmpField, int i, int j) {
-    bool num = false;
-    while (j > 0 && num == false) {
-        tmpField[i][j] == Field[i][j];
-        CheckField_7_line(Field, tmpField, i, j);
-        CheckField_8_line(Field, tmpField, i, j);
-        CheckField_9_line(Field, tmpField, i, j);
-        CheckField_4_line(Field, tmpField, i, j);
-        CheckField_6_line(Field, tmpField, i, j);
-        CheckField_1_line(Field, tmpField, i, j);
-        CheckField_2_line(Field, tmpField, i, j);
-        CheckField_3_line(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+
+    if (j >= 0) {
+        tmpField[i][j] = Field[i][j];
         if (tmpField[i][j] == 10) {
             boom = true;
-            num = true;
-            break;
         }
         else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
             tmpField[i][j] = 11;
-            num = false;
-            j--;
+            num4 = false;
+            i_tmp = i;
+            j_tmp = j - 1;
+            if (j > 0 && num4 == false) {
+                CheckField_4(Field, tmpField, i_tmp, j_tmp);
+            }
         }
         else {
             tmpField[i][j] = Field[i][j];
-            num = true;
-            break;
+            num4 = true;
         }
     }
 }
 
 void CheckField_6(int** Field, int** tmpField, int i, int j) {
-    bool num = false;
-    while (j < WIDTH - 1 && num == false) {
-        tmpField[i][j] == Field[i][j];
-        CheckField_7_line(Field, tmpField, i, j);
-        CheckField_8_line(Field, tmpField, i, j);
-        CheckField_9_line(Field, tmpField, i, j);
-        CheckField_4_line(Field, tmpField, i, j);
-        CheckField_6_line(Field, tmpField, i, j);
-        CheckField_1_line(Field, tmpField, i, j);
-        CheckField_2_line(Field, tmpField, i, j);
-        CheckField_3_line(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+    if (j <= WIDTH - 1) {
+        tmpField[i][j] = Field[i][j];
+
         if (tmpField[i][j] == 10) {
             boom = true;
-            num = true;
-            break;
         }
         else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
             tmpField[i][j] = 11;
-            num = false;
-            j++;
+            num6 = false;
+            i_tmp = i;
+            j_tmp = j + 1;
+            if (j < WIDTH - 1 && num6 == false) {
+                CheckField_6(Field, tmpField, i_tmp, j_tmp);
+            }
         }
         else {
             tmpField[i][j] = Field[i][j];
-            num = true;
-            break;
+            num6 = true;
         }
     }
 }
 
 void CheckField_1(int** Field, int** tmpField, int i, int j) {
-    bool num = false;
-    while (((i <= HEIGHT - 1) && (j >= 0)) && num == false) {
-        tmpField[i][j] == Field[i][j];
-        CheckField_7_line(Field, tmpField, i, j);
-        CheckField_8_line(Field, tmpField, i, j);
-        CheckField_9_line(Field, tmpField, i, j);
-        CheckField_4_line(Field, tmpField, i, j);
-        CheckField_6_line(Field, tmpField, i, j);
-        CheckField_1_line(Field, tmpField, i, j);
-        CheckField_2_line(Field, tmpField, i, j);
-        CheckField_3_line(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+
+    if ((i <= HEIGHT - 1) && (j >= 0)) {
+        tmpField[i][j] = Field[i][j];
         if (tmpField[i][j] == 10) {
             boom = true;
-            num = true;
-            break;
         }
         else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
             tmpField[i][j] = 11;
-            num = false;
-            i++;
-            j--;
+            num1 = false;
+            i_tmp = i + 1;
+            j_tmp = j - 1;
+            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
+                CheckField_1(Field, tmpField, i_tmp, j_tmp);
+            }
         }
         else {
             tmpField[i][j] = Field[i][j];
-            num = true;
-            break;
+            num1 = true;
         }
     }
 }
 
 void CheckField_2(int** Field, int** tmpField, int i, int j) {
-    bool num = false;
-    while (i < HEIGHT - 1 && num == false) {
-        tmpField[i][j] == Field[i][j];
-        CheckField_7_line(Field, tmpField, i, j);
-        CheckField_8_line(Field, tmpField, i, j);
-        CheckField_9_line(Field, tmpField, i, j);
-        CheckField_4_line(Field, tmpField, i, j);
-        CheckField_6_line(Field, tmpField, i, j);
-        CheckField_1_line(Field, tmpField, i, j);
-        CheckField_2_line(Field, tmpField, i, j);
-        CheckField_3_line(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+
+    if (i <= HEIGHT - 1) {
+        tmpField[i][j] = Field[i][j];
         if (tmpField[i][j] == 10) {
             boom = true;
-            num = true;
-            break;
         }
         else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
             tmpField[i][j] = 11;
-            num = false;
-            i++;
+            num2 = false;
+            i_tmp = i + 1;
+            j_tmp = j;
+            if (i < HEIGHT - 1 && num2 == false) {
+                CheckField_2(Field, tmpField, i_tmp, j_tmp);
+            }
         }
         else {
             tmpField[i][j] = Field[i][j];
-            num = true;
-            break;
+            num2 = true;
         }
     }
 }
 
 void CheckField_3(int** Field, int** tmpField, int i, int j) {
-    bool num = false;
-    while (((i < HEIGHT - 1) && (j < WIDTH - 1)) && num == false) {
-        tmpField[i][j] == Field[i][j];
-        CheckField_7_line(Field, tmpField, i, j);
-        CheckField_8_line(Field, tmpField, i, j);
-        CheckField_9_line(Field, tmpField, i, j);
-        CheckField_4_line(Field, tmpField, i, j);
-        CheckField_6_line(Field, tmpField, i, j);
-        CheckField_1_line(Field, tmpField, i, j);
-        CheckField_2_line(Field, tmpField, i, j);
-        CheckField_3_line(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+
+    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
+        tmpField[i][j] = Field[i][j];
+
         if (tmpField[i][j] == 10) {
             boom = true;
-            num = true;
-            break;
         }
         else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
             tmpField[i][j] = 11;
-            num = false;
-            i++;
-            j++;
+            num3 = false;
+            i_tmp = i + 1;
+            j_tmp = j + 1;
+            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
+                CheckField_3(Field, tmpField, i_tmp, j_tmp);
+            }
         }
         else {
             tmpField[i][j] = Field[i][j];
-            num = true;
-            break;
+            num3 = true;
         }
     }
 }
@@ -2483,14 +589,20 @@ void CheckFieldWin(int** Field, int** tmpField) {
 }
 
 void CheckField(int** Field, int** tmpField, int i, int j) {
-    CheckField_7(Field, tmpField, i, j);
-    CheckField_8(Field, tmpField, i, j);
-    CheckField_9(Field, tmpField, i, j);
-    CheckField_4(Field, tmpField, i, j);
-    CheckField_6(Field, tmpField, i, j);
-    CheckField_1(Field, tmpField, i, j);
-    CheckField_2(Field, tmpField, i, j);
-    CheckField_3(Field, tmpField, i, j);
+    int i_tmp = i;
+    int j_tmp = j;
+    if ((i >= 0) && (i < HEIGHT)) {
+        if ((j >= 0) && (j < WIDTH)) {
+            CheckField_7(Field, tmpField, i, j);
+            CheckField_8(Field, tmpField, i, j);
+            CheckField_9(Field, tmpField, i, j);
+            CheckField_4(Field, tmpField, i, j);
+            CheckField_6(Field, tmpField, i, j);
+            CheckField_1(Field, tmpField, i, j);
+            CheckField_2(Field, tmpField, i, j);
+            CheckField_3(Field, tmpField, i, j);
+        }
+    }
 }
 
 int main() {
