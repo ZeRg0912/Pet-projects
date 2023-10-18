@@ -9,8 +9,8 @@
 
 using namespace std;
 
-int HEIGHT = 10;
-int WIDTH = 15;
+int HEIGHT = 20;
+int WIDTH = 30;
 int i_start = 0;
 int j_start = 0;
 
@@ -2514,12 +2514,12 @@ int main() {
             for (int i = 0; i < ((WIDTH / 2) - (WIDTH / 3) + 1); i++) {
                 cout << " ";
             }
-            cout << "Введите № ряда: ";
+            cout << "Введите номер ряда: ";
             cin >> i;
             for (int i = 0; i < ((WIDTH / 2) - (WIDTH / 3) + 1); i++) {
                 cout << " ";
             }
-            cout << "Введите № столбца: ";
+            cout << "Введите номер столбца: ";
             cin >> j;
             if ((i < 1 || i > HEIGHT) || (j < 1 || j > WIDTH)) cout << "Неверные координаты. Попробуйте еще раз." << endl;
         } while ((i < 1 || i > HEIGHT) || (j < 1 || j > WIDTH));
