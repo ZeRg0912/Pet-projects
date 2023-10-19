@@ -13,7 +13,8 @@ using namespace std;
 int rows = 9;     //ряды
 int cols = 9;     //столбцы
 
-int numMines = 3; //кол-во мин
+int numMines = 9; //кол-во мин
+int checkMinesWin = numMines;
 
 bool win = false;
 bool boom = false;
@@ -216,7 +217,7 @@ void clean(int** play, bool** open, int i, int j) {
     }
 }
 
-void checkWin (int** play, int** open) {
+void checkWin (int** play, bool** open) {
     bool similar = false;
     int numOfSimilar = 0;
     for (int i = 0; i < rows; i++) {
@@ -225,12 +226,18 @@ void checkWin (int** play, int** open) {
                 numOfSimilar++;
             }
         }
-        if (numOfSimilar == (rows * cols)) similar = true;
+        if ((numOfSimilar) == ((rows * cols) - checkMinesWin)) similar = true;
         if ((similar == true) && (boom == false)) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    open[i][j] = true;
+                }
+            }
             win = true;
         }
     }
 }
+
 
 int main()
 {
@@ -260,13 +267,20 @@ int main()
         j -= 1;
         //sleep(1);    
         system("cls");
-        clean(playingField, openField, i, j);
-        for (int i = 0; i < ((cols / 2) - (cols / 5)); i++) {
-            cout << " ";
+        if (playingField[i][j] == 9) {
+            openField[i][j] = true;
+            boom = true;
         }
-        cout << " Игра сапер: " << endl;
-        cout << endl;
-        showField(playingField, openField);
+        else {
+            clean(playingField, openField, i, j);
+            for (int i = 0; i < ((cols / 2) - (cols / 5)); i++) {
+                cout << " ";
+            }
+            cout << " Игра сапер: " << endl;
+            cout << endl;
+            showField(playingField, openField);
+            checkWin(playingField, openField);
+        }        
         if (win || boom) system("cls");
     } while (!(win || boom));
     cout << " Игра сапер: " << endl;
