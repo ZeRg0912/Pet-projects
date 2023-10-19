@@ -18,26 +18,6 @@ int NUMOFMINES = 3;
 
 bool boom = false;
 bool win = false;
-bool reverse_i = false;
-bool reverse_j = false;
-
-bool num7 = false;
-bool num8 = false;
-bool num9 = false;
-bool num4 = false;
-bool num6 = false;
-bool num1 = false;
-bool num2 = false;
-bool num3 = false;
-
-void CheckField_7(int** Field, int** tmpField, int i, int j);
-void CheckField_8(int** Field, int** tmpField, int i, int j);
-void CheckField_9(int** Field, int** tmpField, int i, int j);
-void CheckField_4(int** Field, int** tmpField, int i, int j);
-void CheckField_6(int** Field, int** tmpField, int i, int j);
-void CheckField_1(int** Field, int** tmpField, int i, int j);
-void CheckField_2(int** Field, int** tmpField, int i, int j);
-void CheckField_3(int** Field, int** tmpField, int i, int j);
 
 int** CreateField(int HEIGHT, int WIDTH) {
     int** Field = new int* [HEIGHT];
@@ -47,6 +27,20 @@ int** CreateField(int HEIGHT, int WIDTH) {
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             Field[i][j] = 0;
+        }
+    }
+
+    return Field;
+}
+
+bool** CheckOpenField(int HEIGHT, int WIDTH) {
+    bool** Field = new bool* [HEIGHT];
+    for (int i = 0; i < HEIGHT; i++) {
+        Field[i] = new bool[WIDTH];
+    }
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            Field[i][j] = false;
         }
     }
 
@@ -68,7 +62,7 @@ void FillField(int** Field) {
     }
 }
 
-void ShowField(int** Field) {
+void ShowField(int** Field, bool** openField) {
     for (int i = 0; i < HEIGHT; i++) {
         if (i == 0) {
             cout << "   ";
@@ -106,19 +100,24 @@ void ShowField(int** Field) {
                     cout << i + 1 << "|";
                 }
             }
-            switch (Field[i][j]) {
-            case 0:
+            if (openField[i][j]) {
+                switch (Field[i][j]) {
+                case 0:
+                    cout << " ";
+                    break;
+                case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
+                    cout << Field[i][j];
+                    break;
+                case 10:
+                    cout << "*";
+                    break;
+                case 11:
+                    cout << "-";
+                    break;
+                }
+            }
+            else {
                 cout << " ";
-                break;
-            case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9:
-                cout << Field[i][j];
-                break;
-            case 10:
-                cout << "*";
-                break;
-            case 11:
-                cout << "-";
-                break;
             }
             if (j == WIDTH - 1) {
                 cout << "|" << i + 1;
@@ -175,398 +174,45 @@ void CheckMines(int** Field) {
     }
 }
 
-void copyBoard(int** src, int** dst) {
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            dst[i][j] = src[i][j];
-        }
-    }
-}
-
-void DeleteField(int** Field) {
+void DeleteIntField(int** Field) {
     for (int i = 0; i < HEIGHT; i++) {
         delete[] Field[i];
     }
     delete[] Field;
 }
 
-void CheckField_backup(int** Field, int** tmpField, int i, int j) {
-    int minesNear = 0;
-    int i_tmp = 0;
-    int j_tmp = 0;
+void DeleteBoolField(bool** Field) {
+    for (int i = 0; i < HEIGHT; i++) {
+        delete[] Field[i];
+    }
+    delete[] Field;
+}
 
+void CheckField(int** Field, int** tmpField, bool** openField, int i, int j) {
     tmpField[i][j] = Field[i][j];
-
     if (tmpField[i][j] == 10) {
         boom = true;
     }
-    else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-        tmpField[i][j] = 11;
-
-        i = i_start;
-        j = j_start;
-        // num 7
-        if ((i > 0) && (j > 0)) {
-            while (((i > 0) && (j > 0)) && Field[i - 1][j - 1] != 10) {
-                i--;
-                j--;
-                tmpField[i][j] = Field[i][j];
-                if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-                    tmpField[i][j] = 11;
-                }
-                else {
-                    tmpField[i][j] = Field[i][j];
-                    break;
-                }
-            }
-        }
-
-        i = i_start;
-        j = j_start;
-        // num 8
-        if ((i > 0)) {
-            while ((i > 0) && Field[i - 1][j] != 10) {
-                i--;
-                tmpField[i][j] = Field[i][j];
-                if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-                    tmpField[i][j] = 11;
-                }
-                else {
-                    tmpField[i][j] = Field[i][j];
-                    break;
-                }
-            }
-        }
-
-        i = i_start;
-        j = j_start;
-        // num 9
-        if ((i > 0) && (j < WIDTH - 1)) {
-            while (((i > 0) && (j < WIDTH - 1)) && Field[i - 1][j + 1] != 10) {
-                i--;
-                j++;
-                tmpField[i][j] = Field[i][j];
-                if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-                    tmpField[i][j] = 11;
-                }
-                else {
-                    tmpField[i][j] = Field[i][j];
-                    break;
-                }
-            }
-        }
-
-        i = i_start;
-        j = j_start;
-        // num 4
-        if (j > 0) {
-            while ((j > 0) && Field[i][j - 1] != 10) {
-                j--;
-                tmpField[i][j] = Field[i][j];
-                if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-                    tmpField[i][j] = 11;
-                }
-                else {
-                    tmpField[i][j] = Field[i][j];
-                    break;
-                }
-            }
-        }
-
-        i = i_start;
-        j = j_start;
-        // num 6
-        if (j < WIDTH - 1) {
-            while ((j < WIDTH - 1) && Field[i][j + 1] != 10) {
-                j++;
-                tmpField[i][j] = Field[i][j];
-                if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-                    tmpField[i][j] = 11;
-                }
-                else {
-                    tmpField[i][j] = Field[i][j];
-                    break;
-                }
-            }
-        }
-
-        i = i_start;
-        j = j_start;
-        // num 1
-        if ((i < HEIGHT - 1) && (j > 0)) {
-            while (((i < HEIGHT - 1) && (j > 0)) && Field[i + 1][j - 1] != 10) {
-                i++;
-                j--;
-                tmpField[i][j] = Field[i][j];
-                if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-                    tmpField[i][j] = 11;
-                }
-                else {
-                    tmpField[i][j] = Field[i][j];
-                    break;
-                }
-            }
-        }
-
-        i = i_start;
-        j = j_start;
-        // num 2
-        if (i < HEIGHT - 1) {
-            while ((i < HEIGHT - 1) && Field[i + 1][j] != 10) {
-                i++;
-                tmpField[i][j] = Field[i][j];
-                if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-                    tmpField[i][j] = 11;
-                }
-                else {
-                    tmpField[i][j] = Field[i][j];
-                    break;
-                }
-            }
-        }
-
-        i = i_start;
-        j = j_start;
-        // num 3
-        if ((i < HEIGHT - 1) && (j < WIDTH - 1)) {
-            while (((i < HEIGHT - 1) && (j < WIDTH - 1)) && Field[i + 1][j + 1] != 10) {
-                i++;
-                j++;
-                tmpField[i][j] = Field[i][j];
-                if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-                    tmpField[i][j] = 11;
-                }
-                else {
-                    tmpField[i][j] = Field[i][j];
-                    break;
-                }
-            }
-        }
-
-    }
     else {
-        tmpField[i][j] = Field[i][j];
-    }
-
-    bool similar = false;
-    int numOfSimilar = 0;
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            if (((Field[i][j] == tmpField[i][j]) || (tmpField[i][j] == 11)) || ((Field[i][j] == 10) && (tmpField[i][j] != 10))) {
-                numOfSimilar++;
-            }
-            else if ((Field[i][j] != tmpField[i][j])) {
-
-            }
-        }
-        if (numOfSimilar == (HEIGHT * WIDTH)) similar = true;
-        if ((similar == true) && (boom == false)) {
-            win = true;
-        }
-    }
-}
-
-void CheckField_7(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num7 = false;
-            i_tmp = i - 1;
-            j_tmp = j - 1;
-            int i_tmp_tmp = i_tmp;
-            int j_tmp_tmp = j_tmp;
-            if ((i_tmp > 0) && (j_tmp > 0) && num7 == false) {
-                CheckField_7(Field, tmpField, i_tmp, j_tmp);
+        if ((i > 0) && (i < HEIGHT)) {
+            if ((j > 0) && (j < WIDTH)) {
+                if (!openField[i][j]) {
+                    openField[i][j] = true;
+                    if (tmpField[i][j] == 0) {
+                        CheckField(Field, tmpField, openField, i - 1, j - 1);
+                        CheckField(Field, tmpField, openField, i - 1, j);
+                        CheckField(Field, tmpField, openField, i - 1, j + 1);
+                        CheckField(Field, tmpField, openField, i - 1, j + 1);
+                        CheckField(Field, tmpField, openField, i, j - 1);
+                        CheckField(Field, tmpField, openField, i, j + 1);
+                        CheckField(Field, tmpField, openField, i + 1, j - 1);
+                        CheckField(Field, tmpField, openField, i + 1, j);
+                        CheckField(Field, tmpField, openField, i + 1, j + 1);
+                    }
+                }
             }
         }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num7 = true;
-        }
-    }
-}
-
-void CheckField_8(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num8 = false;
-            i_tmp = i - 1;
-            j_tmp = j;
-            if (i > 0 && num8 == false) {
-                CheckField_8(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num8 = true;
-        }
-    }
-}
-
-void CheckField_9(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i >= 0) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num9 = false;
-            i_tmp = i - 1;
-            j_tmp = j + 1;
-            if ((i > 0) && (j < WIDTH - 1) && num9 == false) {
-                CheckField_9(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num9 = true;
-        }
-    }
-}
-
-void CheckField_4(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (j >= 0) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num4 = false;
-            i_tmp = i;
-            j_tmp = j - 1;
-            if (j > 0 && num4 == false) {
-                CheckField_4(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num4 = true;
-        }
-    }
-}
-
-void CheckField_6(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if (j <= WIDTH - 1) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num6 = false;
-            i_tmp = i;
-            j_tmp = j + 1;
-            if (j < WIDTH - 1 && num6 == false) {
-                CheckField_6(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num6 = true;
-        }
-    }
-}
-
-void CheckField_1(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j >= 0)) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num1 = false;
-            i_tmp = i + 1;
-            j_tmp = j - 1;
-            if ((i < HEIGHT - 1) && (j > 0) && num1 == false) {
-                CheckField_1(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num1 = true;
-        }
-    }
-}
-
-void CheckField_2(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if (i <= HEIGHT - 1) {
-        tmpField[i][j] = Field[i][j];
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num2 = false;
-            i_tmp = i + 1;
-            j_tmp = j;
-            if (i < HEIGHT - 1 && num2 == false) {
-                CheckField_2(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num2 = true;
-        }
-    }
-}
-
-void CheckField_3(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-
-    if ((i <= HEIGHT - 1) && (j <= WIDTH - 1)) {
-        tmpField[i][j] = Field[i][j];
-
-        if (tmpField[i][j] == 10) {
-            boom = true;
-        }
-        else if (tmpField[i][j] == 0 || tmpField[i][j] == 11) {
-            tmpField[i][j] = 11;
-            num3 = false;
-            i_tmp = i + 1;
-            j_tmp = j + 1;
-            if ((i < HEIGHT - 1) && (j < WIDTH - 1) && num3 == false) {
-                CheckField_3(Field, tmpField, i_tmp, j_tmp);
-            }
-        }
-        else {
-            tmpField[i][j] = Field[i][j];
-            num3 = true;
-        }
-    }
+    }    
 }
 
 void CheckFieldWin(int** Field, int** tmpField) {
@@ -585,22 +231,8 @@ void CheckFieldWin(int** Field, int** tmpField) {
         if ((similar == true) && (boom == false)) {
             win = true;
         }
-    }
-}
-
-void CheckField(int** Field, int** tmpField, int i, int j) {
-    int i_tmp = i;
-    int j_tmp = j;
-    if ((i >= 0) && (i < HEIGHT)) {
-        if ((j >= 0) && (j < WIDTH)) {
-            CheckField_7(Field, tmpField, i, j);
-            CheckField_8(Field, tmpField, i, j);
-            CheckField_9(Field, tmpField, i, j);
-            CheckField_4(Field, tmpField, i, j);
-            CheckField_6(Field, tmpField, i, j);
-            CheckField_1(Field, tmpField, i, j);
-            CheckField_2(Field, tmpField, i, j);
-            CheckField_3(Field, tmpField, i, j);
+        else {
+            win = false;
         }
     }
 }
@@ -611,6 +243,7 @@ int main() {
     system("cls");
     int** Field = CreateField(HEIGHT, WIDTH);
     int** tmpField = CreateField(HEIGHT, WIDTH);
+    bool** openField = CheckOpenField(HEIGHT, WIDTH);
     FillField(Field);
     CheckMines(Field);
     for (int i = 0; i < ((WIDTH / 2) - (WIDTH / 5)); i++) {
@@ -618,7 +251,7 @@ int main() {
     }
     cout << " Игра сапер: " << endl;
     cout << endl;
-    ShowField(tmpField);
+    ShowField(tmpField, openField);
     do {
         int i, j;
         do {
@@ -641,13 +274,13 @@ int main() {
         j_start = j;
         //sleep(1);    
         system("cls");
-        CheckField(Field, tmpField, i, j);
+        CheckField(Field, tmpField, openField, i, j);
         for (int i = 0; i < ((WIDTH / 2) - (WIDTH / 5)); i++) {
             cout << " ";
         }
         cout << " Игра сапер: " << endl;
         cout << endl;
-        ShowField(tmpField);
+        ShowField(tmpField, openField);
         CheckFieldWin(Field, tmpField);
         if (win || boom) system("cls");
     } while (!(win || boom));
@@ -657,7 +290,7 @@ int main() {
     cout << " Игра сапер: " << endl;
     cout << endl;
     if (boom) {
-        ShowField(tmpField);
+        ShowField(tmpField, openField);
         for (int i = 0; i < ((WIDTH / 2) - (WIDTH / 4)); i++) {
             cout << " ";
         }
@@ -665,14 +298,15 @@ int main() {
         cout << " Вы проиграли!!!" << endl;
     }
     if (win) {
-        ShowField(Field);
+        ShowField(Field, openField);
         for (int i = 0; i < ((WIDTH / 2) - (WIDTH / 4)); i++) {
             cout << " ";
         }
         cout << endl;
         cout << " Вы победили!!!" << endl;
     }
-    DeleteField(Field);
-    DeleteField(tmpField);
+    DeleteBoolField(openField);
+    DeleteIntField(Field);
+    DeleteIntField(tmpField);
     return 0;
 }

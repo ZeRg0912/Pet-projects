@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{30144ef9-fa82-4ac9-9dee-4f34ccaab6d9}</ProjectGuid>
+    <ProjectGuid>{f0c1350e-49bc-4977-9720-2ff4a87fbba8}</ProjectGuid>
     <RootNamespace>Miner</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
