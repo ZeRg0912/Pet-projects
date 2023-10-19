@@ -14,7 +14,7 @@ int rows = 9;     //ряды
 int cols = 9;     //столбцы
 
 int numMines = 9; //кол-во мин
-int checkMinesWin = numMines;
+int checkMinesWin = 0;
 
 bool win = false;
 bool boom = false;
@@ -53,6 +53,7 @@ void fillIntArray(int** Array) {
             if (rand() % 10 == 0 && numMines > 0) {
                 Array[i][j] = 9;
                 numMines--;
+                checkMinesWin++;
             }
             else {
                 Array[i][j] = 0;
