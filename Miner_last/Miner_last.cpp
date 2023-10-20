@@ -1,6 +1,4 @@
-﻿// Miner_last.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-#include <iostream>
+﻿#include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
@@ -10,11 +8,13 @@
 
 using namespace std;
 
-int rows = 30;     //ряды
-int cols = 30;     //столбцы
+int rows = 15;          // ряды
+int cols = 15;          // столбцы
 
-int numMines = 50; //кол-во мин
+int numMines = 40;      // кол-во мин
 int checkMinesWin = 0;
+
+int chanceSpawn = 10;    // Шанс на спавн мины
 
 bool win = false;
 bool boom = false;
@@ -50,7 +50,7 @@ void fillIntArray(int** Array) {
     srand(time(nullptr));
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            if (rand() % 10 == 0 && numMines > 0) {
+            if (rand() % chanceSpawn == 0 && numMines > 0) {
                 Array[i][j] = 9;
                 numMines--;
                 checkMinesWin++;
@@ -245,12 +245,14 @@ int main()
     setlocale(LC_ALL, "Russian"); // задаём русский текст
     system("chcp 1251"); // настраиваем кодировку консоли
 
-    int** playingField = createIntArray(rows, cols);
-    bool** openField = createBoolArray(rows, cols);
+    int** playingField = createIntArray(rows, cols); // Создаем игровое поле
+    bool** openField = createBoolArray(rows, cols);  // Создаем маску открытых ячеек игрового поля
 
+    // Заполенение поля
     fillIntArray(playingField);
     system("cls");
 
+    // Шапка игры
     for (int i = 0; i < ((cols / 2) - 2); i++) {
         cout << "  ";
     }
@@ -258,6 +260,8 @@ int main()
     cout << "Игра сапер:" << endl;
     cout << endl;
     showField(playingField, openField);
+
+    // Ввод координат до победы или поражения
     do {
         int i, j;
         do {
@@ -298,12 +302,16 @@ int main()
         }        
         if (win || boom) system("cls");
     } while (!(win || boom));
+
+    // Шапка после победы или поражения
     for (int i = 0; i < ((cols / 2) - 2); i++) {
         cout << "  ";
     }
     cout << "   ";
     cout << "Игра сапер: " << endl;
     cout << endl;
+
+    // Вывод после поражения
     if (boom) {
         showField(playingField, openField);
         cout << endl;
@@ -314,6 +322,8 @@ int main()
         cout << "   ";
         cout << "Вы проиграли!!!" << endl;
     }
+
+    // Вывод после победы
     if (win) {
         showField(playingField, openField);
         cout << endl;
@@ -328,14 +338,3 @@ int main()
     deleteBoolArray(openField);
     return 0;
 }
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
