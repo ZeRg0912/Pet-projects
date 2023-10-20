@@ -10,10 +10,10 @@
 
 using namespace std;
 
-int rows = 9;     //ряды
-int cols = 9;     //столбцы
+int rows = 30;     //ряды
+int cols = 30;     //столбцы
 
-int numMines = 9; //кол-во мин
+int numMines = 50; //кол-во мин
 int checkMinesWin = 0;
 
 bool win = false;
@@ -251,15 +251,28 @@ int main()
     fillIntArray(playingField);
     system("cls");
 
-    cout << " Игра сапер: " << endl;
+    for (int i = 0; i < ((cols / 2) - 2); i++) {
+        cout << "  ";
+    }
+    cout << "   ";
+    cout << "Игра сапер:" << endl;
     cout << endl;
     showField(playingField, openField);
     do {
         int i, j;
         do {
             cout << endl;
+            cout << endl;
+            cout << "   ";
+            for (int i = 0; i < ((cols / 2) - 5); i++) {
+                cout << "  ";
+            }
             cout << "Введите номер ряда: ";
             cin >> i;
+            cout << "   ";
+            for (int i = 0; i < ((cols / 2) - 6); i++) {
+                cout << "  ";
+            }
             cout << "Введите номер столбца: ";
             cin >> j;
             if ((i < 1 || i > rows) || (j < 1 || j > cols)) cout << "Неверные координаты. Попробуйте еще раз." << endl;
@@ -274,33 +287,42 @@ int main()
         }
         else {
             clean(playingField, openField, i, j);
-            for (int i = 0; i < ((cols / 2) - (cols / 5)); i++) {
-                cout << " ";
+            for (int i = 0; i < ((cols / 2) - 2); i++) {
+                cout << "  ";
             }
-            cout << " Игра сапер: " << endl;
+            cout << "   ";
+            cout << "Игра сапер: " << endl;
             cout << endl;
             showField(playingField, openField);
             checkWin(playingField, openField);
         }        
         if (win || boom) system("cls");
     } while (!(win || boom));
-    cout << " Игра сапер: " << endl;
+    for (int i = 0; i < ((cols / 2) - 2); i++) {
+        cout << "  ";
+    }
+    cout << "   ";
+    cout << "Игра сапер: " << endl;
     cout << endl;
     if (boom) {
         showField(playingField, openField);
-        for (int i = 0; i < ((rows / 2) - (cols / 4)); i++) {
-            cout << " ";
-        }
         cout << endl;
-        cout << " Вы проиграли!!!" << endl;
+        cout << endl;
+        for (int i = 0; i < ((cols / 2) - 4); i++) {
+            cout << "  ";
+        }
+        cout << "   ";
+        cout << "Вы проиграли!!!" << endl;
     }
     if (win) {
         showField(playingField, openField);
-        for (int i = 0; i < ((rows / 2) - (cols / 4)); i++) {
-            cout << " ";
-        }
         cout << endl;
-        cout << " Вы победили!!!" << endl;
+        cout << endl;
+        for (int i = 0; i < ((cols / 2) - 3); i++) {
+            cout << "  ";
+        }
+        cout << "   ";
+        cout << "Вы победили!!!" << endl;
     }
     deleteIntArray(playingField);
     deleteBoolArray(openField);
