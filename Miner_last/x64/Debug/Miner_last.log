@@ -1,3 +1,4 @@
 ﻿  Miner_last.cpp
-E:\altw\MVS-projects\Miner_last\Miner_last.cpp(50,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  Miner_last.vcxproj -> E:\altw\MVS-projects\Miner_last\x64\Debug\Miner_last.exe
+E:\MVS_projects\Miner_last\Miner_last.cpp(50,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  LINK : не найден или не выполнена сборка E:\MVS_projects\Miner_last\x64\Debug\Miner_last.exe при последней инкрементной компоновке; выполняется полная компоновка
+  Miner_last.vcxproj -> E:\MVS_projects\Miner_last\x64\Debug\Miner_last.exe
