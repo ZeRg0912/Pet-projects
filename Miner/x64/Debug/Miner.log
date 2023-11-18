@@ -1,3 +1,0 @@
-﻿  main.cpp
-E:\altw\MVS-projects\Miner\main.cpp(51,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-  Miner.vcxproj -> E:\altw\MVS-projects\Miner\x64\Debug\Miner.exe
