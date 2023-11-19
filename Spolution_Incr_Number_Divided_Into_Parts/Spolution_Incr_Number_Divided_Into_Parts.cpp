@@ -1,7 +1,24 @@
 ﻿#include <iostream>
+#include <vector>
 using namespace std;
 
-void Solution(int* array, int size, int incr) {
+vector<int> int_to_array(int number) {
+	int tmp_number = number;
+	int size = 0;
+	do {
+		tmp_number /= 10;
+		size++;
+	} while (tmp_number > 0);
+	vector<int> array(size);
+	tmp_number = number;
+	for (int i = array.size() - 1; i >= 0; i--) {
+		array[i] = tmp_number % 10;
+		tmp_number /= 10;
+	}
+	return array;
+}
+
+void Solution(vector<int>& array, int size, int incr) {
 	size -= 1;
 	array[size] += incr;
 	if (array[size] >= 10) {
@@ -11,20 +28,20 @@ void Solution(int* array, int size, int incr) {
 	}
 }
 
-void show(int* arr, int size) {
-	for (int i = 0; i < size; ++i) {
-		cout << arr[i] << " ";
+void show(vector<int> array) {
+	for (int i = 0; i < array.size(); ++i) {
+		cout << array[i] << " ";
 	}
 	cout << endl;
 }
 
 int main()
 {
-	int array[] = {1, 2, 8, 9};
-	int size = sizeof(array) / sizeof(array[0]);
-	show(array, size);
-	Solution(array, size, 1572);
-	show(array, size);
+	int number = 1289;
+	vector<int> array = int_to_array(number);
+	show(array);
+	Solution(array, array.size(), 582);
+	show(array);
 
 	return 0;
 }
