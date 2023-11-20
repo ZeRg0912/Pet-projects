@@ -19,17 +19,18 @@ vector<int> int_to_array(int number) {
 }
 
 void Solution(vector<int>& array, int size, int incr) {
-	size -= 1;
+	if (size <= 0) array.insert(array.begin(), 0);
+	if (size > 0) size -= 1;
 	array[size] += incr;
 	if (array[size] >= 10) {
 		int temp_num = array[size] / 10;
 		array[size] = array[size] % 10;
-		Solution(array, size, temp_num);
+		if (size >= 0) Solution(array, size, temp_num);
 	}
 }
 
 void show(vector<int> array) {
-	for (int i = 0; i < array.size(); ++i) {
+	for (int i = 0; i < array.size(); i++) {
 		cout << array[i] << " ";
 	}
 	cout << endl;
@@ -37,10 +38,11 @@ void show(vector<int> array) {
 
 int main()
 {
-	int number = 1289;
+	int number = 10289;
+	int incr_number = 10101010;
 	vector<int> array = int_to_array(number);
 	show(array);
-	Solution(array, array.size(), 582);
+	Solution(array, array.size(), incr_number);
 	show(array);
 
 	return 0;
