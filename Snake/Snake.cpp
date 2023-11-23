@@ -6,7 +6,7 @@ using namespace std;
 
 bool gameOver;
 const int width = 20;
-const int height = 20;
+const int height = 10;
 int x, y, fruitX, fruitY, score;
 int tailX[100], tailY[100];
 int nTail;
@@ -14,7 +14,19 @@ int lastDir;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
 
+void setcur(int x, int y)//установка курсора на позицию  x y
+{
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+};
+
 void Setup() {
+    HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);   //Получение хендла
+    CONSOLE_CURSOR_INFO cursor = { 1, false };   // Число от 1 до 100 размер курсора в процентах
+    // false\true - видимость
+    SetConsoleCursorInfo(hCons, &cursor);  //Применение заданных параметров курсора
     gameOver = false;
     dir = STOP;
     x = width / 2 - 1;
@@ -25,8 +37,9 @@ void Setup() {
 }
 
 void Draw() {
-    Sleep(100);
-    system("cls");
+    Sleep(150);
+    //system("cls");
+    setcur(0, 0);
     for (int i = 0; i < width + 1; i++) 
         cout << "#";
     cout << endl;
