@@ -177,20 +177,20 @@ void showField(int** play, bool** open) {
             cout << "    ";
             for (int num = 1; num <= cols; num++) {
                 if (num > 0 && num < 10) {
-                    cout << num << " ";
+                    cout << "  ";
                 }
                 else {
-                    cout << num % 10 << " ";
+                    cout << num / 10 << " ";
                 }
             }
             cout << endl;
             cout << "    ";
             for (int num = 1; num <= cols; num++) {
                 if (num > 0 && num < 10) {
-                    cout << "  ";
+                    cout << num << " ";
                 }
                 else {
-                    cout << num / 10 << " ";
+                    cout << num % 10 << " ";
                 }
             }
         }
