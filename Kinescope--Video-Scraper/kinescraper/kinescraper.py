@@ -162,7 +162,7 @@ def download(urls, links_log='links_log'):
     return files
 
 
-def merge_files(input_files, output_file='output.mp4', ffmpeg_log='ffmpeg_log.txt'):
+def merge_files(input_files, output_file, ffmpeg_log='ffmpeg_log.txt'):
     audio_files = sorted([file for file in input_files if 'audio' in file])
     print(f'\nTemporary audio files downloaded: {", ".join(audio_files)}')
     
