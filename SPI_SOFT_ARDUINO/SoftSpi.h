@@ -7,9 +7,8 @@
 # include <WProgram.h>
 #endif
 
-#include <SPI.h>
+//#include <SPI.h>
 
-/* Hack for Raspberry Pico */
 #if !defined(SPI_CLOCK_DIV2)
 #define SPI_CLOCK_DIV2   2
 #define SPI_CLOCK_DIV4   4
@@ -40,6 +39,5 @@ class SoftSPI {
         int transfer(int);
         int transfer16(int data);
         long long transferBits(long long, long long);
-		
 };
 #endif
