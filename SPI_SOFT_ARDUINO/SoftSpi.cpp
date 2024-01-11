@@ -148,7 +148,6 @@ int SoftSPI::transfer16(int data) {
 	return out.val;
 }
 
-/* transfer lower 'bits' of 'val' value */
 long long SoftSPI::transferBits(long long val, long long bits) {
     digitalWrite(_mosi, LOW);
     digitalWrite(_miso, LOW);
@@ -215,4 +214,15 @@ long long SoftSPI::transferBits(long long val, long long bits) {
     digitalWrite(_miso, LOW);
     digitalWrite(_sck, LOW);
     return out;
+}
+
+// Подсчет номера старшего бита (общее количество бит в передаваемой дате)
+int SoftSPI::int bits(int in) {
+	int bits = 0;
+	int temp = in;
+	while (temp != 0x00) {
+		temp = temp >> 1;
+		bits++;
+	}
+	return bits;
 }

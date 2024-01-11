@@ -39,5 +39,6 @@ class SoftSPI {
         int transfer(int);
         int transfer16(int data);
         long long transferBits(long long, long long);
+        int bitsInData(int data);
 };
 #endif
