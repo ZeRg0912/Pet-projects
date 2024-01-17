@@ -1,8 +1,6 @@
 ChatGPT (беседа № 1):
 
-Для установки напряжения в 1 вольт и измерения тока с Keithley 2400, вам потребуется отправить соответствующие SCPI команды.
-
-Вот обновленный код, который устанавливает напряжение в 1 вольт, затем измеряет ток и выводит его на экран:
+Приношу извинения за путаницу. Вот обновленный код, который использует асинхронную передачу SCPI команд:
 
 #include <iostream>
 #include <Windows.h>
@@ -11,11 +9,17 @@ void CALLBACK WriteCompletionRoutine(DWORD dwErrorCode, DWORD dwBytesTransferred
     // Пустая функция обратного вызова
 }
 
+void CALLBACK ReadCompletionRoutine(DWORD dwErrorCode, DWORD dwBytesTransferred, LPOVERLAPPED lpOverlapped) {
+    // Пустая функция обратного вызова
+}
+
 int main() {
     HANDLE hComm;
     char portName[] = "COM1";
     DWORD baudRate = CBR_9600; // скорость передачи данных
     DCB dcb = {0};
+    OVERLAPPED writeOverlapped = {0};
+    OVERLAPPED readOverlapped = {0};
 
     // Открытие COM-порта
     hComm = CreateFileA(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
@@ -43,14 +47,12 @@ int main() {
     }
 
     // SCPI команда для установки напряжения в 1 вольт
-    const char* setVoltageCommand = "SOURCE:VOLT:LEVEL 1";
+    const char* setVoltageCommand = "SOURCE:VOLTage:LEVel 1";
 
     // Отправка SCPI команды установки напряжения
     DWORD bytesWritten;
-    OVERLAPPED overlapped = { 0 };
-    overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-
-    if (!WriteFileEx(hComm, setVoltageCommand, strlen(setVoltageCommand), &overlapped, WriteCompletionRoutine)) {
+    writeOverlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    if (!WriteFileEx(hComm, setVoltageCommand, strlen(setVoltageCommand), &writeOverlapped, WriteCompletionRoutine)) {
         if (GetLastError() != ERROR_IO_PENDING) {
             std::cout << "Не удалось начать отправку данных." << std::endl;
             CloseHandle(hComm);
@@ -58,7 +60,7 @@ int main() {
         }
 
         // Ожидание завершения отправки
-        if (WaitForSingleObject(overlapped.hEvent, 5000) != WAIT_OBJECT_0) {
+        if (WaitForSingleObject(writeOverlapped.hEvent, 5000) != WAIT_OBJECT_0) {
             CancelIo(hComm);
             std::cout << "Тайм-аут при отправке данных." << std::endl;
             CloseHandle(hComm);
@@ -66,7 +68,7 @@ int main() {
         }
 
         // Получение результата отправки
-        if (!GetOverlappedResult(hComm, &overlapped, &bytesWritten, FALSE)) {
+        if (!GetOverlappedResult(hComm, &writeOverlapped, &bytesWritten, FALSE)) {
             std::cout << "Не удалось получить результат отправки данных." << std::endl;
             CloseHandle(hComm);
             return 1;
@@ -74,21 +76,37 @@ int main() {
     }
 
     // SCPI команда для измерения тока
-    const char* measureCurrentCommand = "MEASURE:CURR?";
+    const char* measureCurrentCommand = "MEASure:CURRent:DC?";
 
     // Отправка SCPI команды измерения тока
-    if (!WriteFile(hComm, measureCurrentCommand, strlen(measureCurrentCommand), &bytesWritten, NULL)) {
-        std::cout << "Не удалось отправить SCPI команду." << std::endl;
-        CloseHandle(hComm);
-        return 1;
+    if (!WriteFileEx(hComm, measureCurrentCommand, strlen(measureCurrentCommand), &writeOverlapped, WriteCompletionRoutine)) {
+        if (GetLastError() != ERROR_IO_PENDING) {
+            std::cout << "Не удалось начать отправку данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
+
+        // Ожидание завершения отправки
+        if (WaitForSingleObject(writeOverlapped.hEvent, 5000) != WAIT_OBJECT_0) {
+            CancelIo(hComm);
+            std::cout << "Тайм-аут при отправке данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
+
+        // Получение результата отправки
+        if (!GetOverlappedResult(hComm, &writeOverlapped, &bytesWritten, FALSE)) {
+            std::cout << "Не удалось получить результат отправки данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
     }
 
     // Чтение ответа от Keithley 2400
     char response[256];
     DWORD bytesRead;
-    overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-
-    if (!ReadFile(hComm, response, sizeof(response) - 1, &bytesRead, &overlapped)) {
+    readOverlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    if (!ReadFileEx(hComm, response, sizeof(response) - 1, &readOverlapped, ReadCompletionRoutine)) {
         if (GetLastError() != ERROR_IO_PENDING) {
             std::cout << "Не удалось начать чтение данных." << std::endl;
             CloseHandle(hComm);
@@ -96,7 +114,7 @@ int main() {
         }
 
         // Ожидание завершения чтения
-        if (WaitForSingleObject(overlapped.hEvent, 5000) != WAIT_OBJECT_0) {
+        if (WaitForSingleObject(readOverlapped.hEvent, 5000) != WAIT_OBJECT_0) {
             CancelIo(hComm);
             std::cout << "Тайм-аут при чтении данных." << std::endl;
             CloseHandle(hComm);
@@ -104,8 +122,7 @@ int main() {
         }
 
         // Получение результата чтения
-
-        if (!GetOverlappedResult(hComm, &overlapped, &bytesRead, FALSE)) {
+        if (!GetOverlappedResult(hComm, &readOverlapped, &bytesRead, FALSE)) {
             std::cout << "Не удалось получить результат чтения данных." << std::endl;
             CloseHandle(hComm);
             return 1;
@@ -124,10 +141,8 @@ int main() {
     return 0;
 }
 
-Обратите внимание, что команда для установки напряжения в 1 вольт - это "SOURCE:VOLT:LEVEL 1". В коде добавлена отправка этой команды перед измерением тока.
+Этот обновленный код снова использует асинхронную передачу SCPI команд. Обратите внимание, что функции обратного вызова WriteCompletionRoutine и ReadCompletionRoutine являются пустыми функциями обратного вызова. Они могут быть использованы для обработки завершения асинхронных операций, если это необходимо.
 
-Помимо этого, SCPI команда для измерения тока - это "MEASURE:CURR?". Она отправляется после установки напряжения.
+Проверьте этот обновленный код с использованием асинхронной передачи SCPI команд для установки напряжения и измерения тока с Keithley 2400.
 
-Проверьте этот обновленный код для установки напряжения и измерения тока с Keithley 2400.
-
-5876 из 16384
+9171 из 16384
