@@ -1,22 +1,24 @@
 ChatGPT (беседа № 2):
 Выбрана Ваша роль: Программист
 
-Вот пример программы на C++ для управления Keithley 2430 через COM-порт и использования SCPI команд:
+Если вы хотите использовать кодировку Unicode в вашей программе, вам нужно будет использовать функции для работы с Unicode, предоставляемые операционной системой Windows. К примеру, функции wprintf и wscanf, вместо printf и scanf.
+
+Вот пример программы на C++ с использованием Unicode для управления Keithley 2430:
 
 #include <iostream>
 #include <Windows.h>
 
-int main()
+int wmain()
 {
     HANDLE hPort;
-    char buffer[256];
+    wchar_t buffer[256];
     DWORD bytesRead;
 
     // Открытие COM-порта
-    hPort = CreateFile("COM1", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    hPort = CreateFileW(L"COM1", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     if (hPort == INVALID_HANDLE_VALUE)
     {
-        std::cout << "Ошибка открытия COM-порта" << std::endl;
+        std::wcout << L"Ошибка открытия COM-порта" << std::endl;
         return 1;
     }
 
@@ -31,24 +33,24 @@ int main()
 
     // Получение ID устройства
     DWORD bytesWritten;
-    WriteFile(hPort, "*IDN?\n", 6, &bytesWritten, NULL);
+    WriteFile(hPort, L"*IDN?\n", 12, &bytesWritten, NULL);
     ReadFile(hPort, buffer, 256, &bytesRead, NULL);
-    buffer[bytesRead] = '\0';
-    std::cout << "ID устройства: " << buffer << std::endl;
+    buffer[bytesRead] = L'\0';
+    std::wcout << L"ID устройства: " << buffer << std::endl;
 
     // Выставление напряжения и тока
-    WriteFile(hPort, ":SOUR:VOLT 10\n", 14, &bytesWritten, NULL);
-    WriteFile(hPort, ":SOUR:CURR 0.1\n", 15, &bytesWritten, NULL);
+    WriteFile(hPort, L":SOUR:VOLT 10\n", 28, &bytesWritten, NULL);
+    WriteFile(hPort, L":SOUR:CURR 0.1\n", 30, &bytesWritten, NULL);
 
     // Включение считывания тока и вывод на консоль
-    WriteFile(hPort, ":SENS:FUNC 'CURR'\n", 18, &bytesWritten, NULL);
+    WriteFile(hPort, L":SENS:FUNC 'CURR'\n", 38, &bytesWritten, NULL);
     while (true)
     {
         // Запрос тока
-        WriteFile(hPort, "READ?\n", 6, &bytesWritten, NULL);
+        WriteFile(hPort, L"READ?\n", 12, &bytesWritten, NULL);
         ReadFile(hPort, buffer, 256, &bytesRead, NULL);
-        buffer[bytesRead] = '\0';
-        std::cout << "Ток: " << buffer;
+        buffer[bytesRead] = L'\0';
+        std::wcout << L"Ток: " << buffer;
 
         // Задержка перед повторным запросом
         Sleep(1000);
@@ -60,8 +62,6 @@ int main()
     return 0;
 }
 
-Пожалуйста, убедитесь, что COM-порт (например, COM1) и настройки соответствуют вашей конфигурации. Также убедитесь, что у вас установлены необходимые драйверы для COM-порта и Keithley 2430.
+В этой программе я использую функции wmain и wcout для работы с юникодными строками и вывода на консоль. Также обратите внимание на добавление префикса L перед строками юникода для указания их формата.
 
-Программа открывает COM-порт, устанавливает конфигурацию порта, отправляет SCPI команды для получения ID устройства, выставления напряжения и тока, а затем считывает постоянный ток и выводит его на консоль, обновляя значение каждую секунду.
-
-890 из 16384
+1685 из 16384
