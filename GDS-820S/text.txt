@@ -1,5 +1,15 @@
+ChatGPT (беседа № 1):
+
+Если программа выводит "Не удалось отправить SCPI команду", проблема может быть связана с асинхронной отправкой данных. Мы можем использовать асинхронную передачу данных с помощью функции WriteFileEx и функции обратного вызова CompletionRoutine.
+
+Вот обновленный код, который исправляет эту проблему:
+
 #include <iostream>
 #include <Windows.h>
+
+void CALLBACK WriteCompletionRoutine(DWORD dwErrorCode, DWORD dwBytesTransferred, LPOVERLAPPED lpOverlapped) {
+    // Пустая функция обратного вызова
+}
 
 int main() {
     HANDLE hComm;
@@ -8,7 +18,7 @@ int main() {
     DCB dcb = {0};
 
     // Открытие COM-порта
-    hComm = CreateFileA(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    hComm = CreateFileA(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
     if (hComm == INVALID_HANDLE_VALUE) {
         std::cout << "Не удалось открыть COM-порт." << std::endl;
         return 1;
@@ -37,22 +47,65 @@ int main() {
 
     // Отправка SCPI команды
     DWORD bytesWritten;
-    if (!WriteFile(hComm, scpiCommand, strlen(scpiCommand), &bytesWritten, NULL)) {
-        std::cout << "Не удалось отправить SCPI команду." << std::endl;
-        CloseHandle(hComm);
-        return 1;
+    OVERLAPPED overlapped = { 0 };
+    overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+    if (!WriteFileEx(hComm, scpiCommand, strlen(scpiCommand), &overlapped, WriteCompletionRoutine)) {
+        if (GetLastError() != ERROR_IO_PENDING) {
+            std::cout << "Не удалось начать отправку данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
+
+        // Ожидание завершения отправки
+        if (WaitForSingleObject(overlapped.hEvent, 5000) != WAIT_OBJECT_0) {
+            CancelIo(hComm);
+            std::cout << "Тайм-аут при отправке данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
+
+        // Получение результата отправки
+        if (!GetOverlappedResult(hComm, &overlapped, &bytesWritten, FALSE)) {
+            std::cout << "Не удалось получить результат отправки данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
     }
 
     // Чтение ответа от Keithley 2400
     char response[256];
     DWORD bytesRead;
-    if (!ReadFile(hComm, response, sizeof(response), &bytesRead, NULL)) {
-        std::cout << "Не удалось прочитать ответ от Keithley 2400." << std::endl;
-        CloseHandle(hComm);
-        return 1;
+    overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+    if (!ReadFile(hComm, response, sizeof(response) - 1, &bytesRead, &overlapped)) {
+        if (GetLastError() != ERROR_IO_PENDING) {
+            std::cout << "Не удалось начать чтение данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
+
+        // Ожидание завершения чтения
+        if (WaitForSingleObject(overlapped.hEvent, 5000) != WAIT_OBJECT_0) {
+            CancelIo(hComm);
+            std::cout << "Тайм-аут при чтении данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
+
+        // Получение результата чтения
+        if (!GetOverlappedResult(hComm, &overlapped, &bytesRead, FALSE)) {
+            std::cout << "Не удалось получить результат чтения данных." << std::endl;
+            CloseHandle(hComm);
+            return 1;
+        }
     }
 
+    // Добавляем терминирующий символ null в конец строки
+    response[bytesRead] = '\0';
+
     // Вывод ответа
+
     std::cout << "IDN строка от Keithley 2400: " << response << std::endl;
 
     // Закрытие COM-порта
@@ -60,3 +113,7 @@ int main() {
 
     return 0;
 }
+
+В этом коде мы используем функцию WriteFileEx для асинхронной отправки команды и функцию ReadFile для чтения ответа. Функция обратного вызова WriteCompletionRoutine остается пустой. Проверьте, выведется ли IDN строка с Keithley 2400 после внесения этих изменений.
+
+4351 из 16384
