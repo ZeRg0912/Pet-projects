@@ -1,0 +1,62 @@
+#include <iostream>
+#include <Windows.h>
+
+int main() {
+    HANDLE hComm;
+    char portName[] = "COM1";
+    DWORD baudRate = CBR_9600; // скорость передачи данных
+    DCB dcb = {0};
+
+    // Открытие COM-порта
+    hComm = CreateFileA(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    if (hComm == INVALID_HANDLE_VALUE) {
+        std::cout << "Не удалось открыть COM-порт." << std::endl;
+        return 1;
+    }
+
+    // Получение текущих настроек порта
+    if (!GetCommState(hComm, &dcb)) {
+        std::cout << "Не удалось получить настройки COM-порта." << std::endl;
+        CloseHandle(hComm);
+        return 1;
+    }
+
+    // Настройка параметров порта
+    dcb.BaudRate = baudRate;
+    dcb.ByteSize = 8; // бит данных
+    dcb.Parity = NOPARITY; // проверка на четность
+    dcb.StopBits = ONESTOPBIT; // количество стоп-бит
+    if (!SetCommState(hComm, &dcb)) {
+        std::cout << "Не удалось настроить COM-порт." << std::endl;
+        CloseHandle(hComm);
+        return 1;
+    }
+
+    // SCPI команда для получения IDN строки
+    const char* scpiCommand = "*IDN?";
+
+    // Отправка SCPI команды
+    DWORD bytesWritten;
+    if (!WriteFile(hComm, scpiCommand, strlen(scpiCommand), &bytesWritten, NULL)) {
+        std::cout << "Не удалось отправить SCPI команду." << std::endl;
+        CloseHandle(hComm);
+        return 1;
+    }
+
+    // Чтение ответа от Keithley 2400
+    char response[256];
+    DWORD bytesRead;
+    if (!ReadFile(hComm, response, sizeof(response), &bytesRead, NULL)) {
+        std::cout << "Не удалось прочитать ответ от Keithley 2400." << std::endl;
+        CloseHandle(hComm);
+        return 1;
+    }
+
+    // Вывод ответа
+    std::cout << "IDN строка от Keithley 2400: " << response << std::endl;
+
+    // Закрытие COM-порта
+    CloseHandle(hComm);
+
+    return 0;
+}
