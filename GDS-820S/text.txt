@@ -1,8 +1,8 @@
 ChatGPT (беседа № 1):
 
-Если программа выводит "Не удалось отправить SCPI команду", проблема может быть связана с асинхронной отправкой данных. Мы можем использовать асинхронную передачу данных с помощью функции WriteFileEx и функции обратного вызова CompletionRoutine.
+Для установки напряжения в 1 вольт и измерения тока с Keithley 2400, вам потребуется отправить соответствующие SCPI команды.
 
-Вот обновленный код, который исправляет эту проблему:
+Вот обновленный код, который устанавливает напряжение в 1 вольт, затем измеряет ток и выводит его на экран:
 
 #include <iostream>
 #include <Windows.h>
@@ -42,15 +42,15 @@ int main() {
         return 1;
     }
 
-    // SCPI команда для получения IDN строки
-    const char* scpiCommand = "*IDN?";
+    // SCPI команда для установки напряжения в 1 вольт
+    const char* setVoltageCommand = "SOURCE:VOLT:LEVEL 1";
 
-    // Отправка SCPI команды
+    // Отправка SCPI команды установки напряжения
     DWORD bytesWritten;
     OVERLAPPED overlapped = { 0 };
     overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-    if (!WriteFileEx(hComm, scpiCommand, strlen(scpiCommand), &overlapped, WriteCompletionRoutine)) {
+    if (!WriteFileEx(hComm, setVoltageCommand, strlen(setVoltageCommand), &overlapped, WriteCompletionRoutine)) {
         if (GetLastError() != ERROR_IO_PENDING) {
             std::cout << "Не удалось начать отправку данных." << std::endl;
             CloseHandle(hComm);
@@ -71,6 +71,16 @@ int main() {
             CloseHandle(hComm);
             return 1;
         }
+    }
+
+    // SCPI команда для измерения тока
+    const char* measureCurrentCommand = "MEASURE:CURR?";
+
+    // Отправка SCPI команды измерения тока
+    if (!WriteFile(hComm, measureCurrentCommand, strlen(measureCurrentCommand), &bytesWritten, NULL)) {
+        std::cout << "Не удалось отправить SCPI команду." << std::endl;
+        CloseHandle(hComm);
+        return 1;
     }
 
     // Чтение ответа от Keithley 2400
@@ -94,6 +104,7 @@ int main() {
         }
 
         // Получение результата чтения
+
         if (!GetOverlappedResult(hComm, &overlapped, &bytesRead, FALSE)) {
             std::cout << "Не удалось получить результат чтения данных." << std::endl;
             CloseHandle(hComm);
@@ -105,8 +116,7 @@ int main() {
     response[bytesRead] = '\0';
 
     // Вывод ответа
-
-    std::cout << "IDN строка от Keithley 2400: " << response << std::endl;
+    std::cout << "Ток измеренный Keithley 2400: " << response << std::endl;
 
     // Закрытие COM-порта
     CloseHandle(hComm);
@@ -114,6 +124,10 @@ int main() {
     return 0;
 }
 
-В этом коде мы используем функцию WriteFileEx для асинхронной отправки команды и функцию ReadFile для чтения ответа. Функция обратного вызова WriteCompletionRoutine остается пустой. Проверьте, выведется ли IDN строка с Keithley 2400 после внесения этих изменений.
+Обратите внимание, что команда для установки напряжения в 1 вольт - это "SOURCE:VOLT:LEVEL 1". В коде добавлена отправка этой команды перед измерением тока.
 
-4351 из 16384
+Помимо этого, SCPI команда для измерения тока - это "MEASURE:CURR?". Она отправляется после установки напряжения.
+
+Проверьте этот обновленный код для установки напряжения и измерения тока с Keithley 2400.
+
+5876 из 16384
