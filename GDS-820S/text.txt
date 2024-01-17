@@ -1,148 +1,67 @@
-ChatGPT (беседа № 1):
+ChatGPT (беседа № 2):
+Выбрана Ваша роль: Программист
 
-Приношу извинения за путаницу. Вот обновленный код, который использует асинхронную передачу SCPI команд:
+Вот пример программы на C++ для управления Keithley 2430 через COM-порт и использования SCPI команд:
 
 #include <iostream>
 #include <Windows.h>
 
-void CALLBACK WriteCompletionRoutine(DWORD dwErrorCode, DWORD dwBytesTransferred, LPOVERLAPPED lpOverlapped) {
-    // Пустая функция обратного вызова
-}
-
-void CALLBACK ReadCompletionRoutine(DWORD dwErrorCode, DWORD dwBytesTransferred, LPOVERLAPPED lpOverlapped) {
-    // Пустая функция обратного вызова
-}
-
-int main() {
-    HANDLE hComm;
-    char portName[] = "COM1";
-    DWORD baudRate = CBR_9600; // скорость передачи данных
-    DCB dcb = {0};
-    OVERLAPPED writeOverlapped = {0};
-    OVERLAPPED readOverlapped = {0};
+int main()
+{
+    HANDLE hPort;
+    char buffer[256];
+    DWORD bytesRead;
 
     // Открытие COM-порта
-    hComm = CreateFileA(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
-    if (hComm == INVALID_HANDLE_VALUE) {
-        std::cout << "Не удалось открыть COM-порт." << std::endl;
+    hPort = CreateFile("COM1", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    if (hPort == INVALID_HANDLE_VALUE)
+    {
+        std::cout << "Ошибка открытия COM-порта" << std::endl;
         return 1;
     }
 
-    // Получение текущих настроек порта
-    if (!GetCommState(hComm, &dcb)) {
-        std::cout << "Не удалось получить настройки COM-порта." << std::endl;
-        CloseHandle(hComm);
-        return 1;
-    }
+    // Установка конфигурации COM-порта
+    DCB dcb;
+    GetCommState(hPort, &dcb);
+    dcb.BaudRate = CBR_9600;
+    dcb.ByteSize = 8;
+    dcb.StopBits = ONESTOPBIT;
+    dcb.Parity = NOPARITY;
+    SetCommState(hPort, &dcb);
 
-    // Настройка параметров порта
-    dcb.BaudRate = baudRate;
-    dcb.ByteSize = 8; // бит данных
-    dcb.Parity = NOPARITY; // проверка на четность
-    dcb.StopBits = ONESTOPBIT; // количество стоп-бит
-    if (!SetCommState(hComm, &dcb)) {
-        std::cout << "Не удалось настроить COM-порт." << std::endl;
-        CloseHandle(hComm);
-        return 1;
-    }
-
-    // SCPI команда для установки напряжения в 1 вольт
-    const char* setVoltageCommand = "SOURCE:VOLTage:LEVel 1";
-
-    // Отправка SCPI команды установки напряжения
+    // Получение ID устройства
     DWORD bytesWritten;
-    writeOverlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-    if (!WriteFileEx(hComm, setVoltageCommand, strlen(setVoltageCommand), &writeOverlapped, WriteCompletionRoutine)) {
-        if (GetLastError() != ERROR_IO_PENDING) {
-            std::cout << "Не удалось начать отправку данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
+    WriteFile(hPort, "*IDN?\n", 6, &bytesWritten, NULL);
+    ReadFile(hPort, buffer, 256, &bytesRead, NULL);
+    buffer[bytesRead] = '\0';
+    std::cout << "ID устройства: " << buffer << std::endl;
 
-        // Ожидание завершения отправки
-        if (WaitForSingleObject(writeOverlapped.hEvent, 5000) != WAIT_OBJECT_0) {
-            CancelIo(hComm);
-            std::cout << "Тайм-аут при отправке данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
+    // Выставление напряжения и тока
+    WriteFile(hPort, ":SOUR:VOLT 10\n", 14, &bytesWritten, NULL);
+    WriteFile(hPort, ":SOUR:CURR 0.1\n", 15, &bytesWritten, NULL);
 
-        // Получение результата отправки
-        if (!GetOverlappedResult(hComm, &writeOverlapped, &bytesWritten, FALSE)) {
-            std::cout << "Не удалось получить результат отправки данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
+    // Включение считывания тока и вывод на консоль
+    WriteFile(hPort, ":SENS:FUNC 'CURR'\n", 18, &bytesWritten, NULL);
+    while (true)
+    {
+        // Запрос тока
+        WriteFile(hPort, "READ?\n", 6, &bytesWritten, NULL);
+        ReadFile(hPort, buffer, 256, &bytesRead, NULL);
+        buffer[bytesRead] = '\0';
+        std::cout << "Ток: " << buffer;
+
+        // Задержка перед повторным запросом
+        Sleep(1000);
     }
-
-    // SCPI команда для измерения тока
-    const char* measureCurrentCommand = "MEASure:CURRent:DC?";
-
-    // Отправка SCPI команды измерения тока
-    if (!WriteFileEx(hComm, measureCurrentCommand, strlen(measureCurrentCommand), &writeOverlapped, WriteCompletionRoutine)) {
-        if (GetLastError() != ERROR_IO_PENDING) {
-            std::cout << "Не удалось начать отправку данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
-
-        // Ожидание завершения отправки
-        if (WaitForSingleObject(writeOverlapped.hEvent, 5000) != WAIT_OBJECT_0) {
-            CancelIo(hComm);
-            std::cout << "Тайм-аут при отправке данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
-
-        // Получение результата отправки
-        if (!GetOverlappedResult(hComm, &writeOverlapped, &bytesWritten, FALSE)) {
-            std::cout << "Не удалось получить результат отправки данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
-    }
-
-    // Чтение ответа от Keithley 2400
-    char response[256];
-    DWORD bytesRead;
-    readOverlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-    if (!ReadFileEx(hComm, response, sizeof(response) - 1, &readOverlapped, ReadCompletionRoutine)) {
-        if (GetLastError() != ERROR_IO_PENDING) {
-            std::cout << "Не удалось начать чтение данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
-
-        // Ожидание завершения чтения
-        if (WaitForSingleObject(readOverlapped.hEvent, 5000) != WAIT_OBJECT_0) {
-            CancelIo(hComm);
-            std::cout << "Тайм-аут при чтении данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
-
-        // Получение результата чтения
-        if (!GetOverlappedResult(hComm, &readOverlapped, &bytesRead, FALSE)) {
-            std::cout << "Не удалось получить результат чтения данных." << std::endl;
-            CloseHandle(hComm);
-            return 1;
-        }
-    }
-
-    // Добавляем терминирующий символ null в конец строки
-    response[bytesRead] = '\0';
-
-    // Вывод ответа
-    std::cout << "Ток измеренный Keithley 2400: " << response << std::endl;
 
     // Закрытие COM-порта
-    CloseHandle(hComm);
+    CloseHandle(hPort);
 
     return 0;
 }
 
-Этот обновленный код снова использует асинхронную передачу SCPI команд. Обратите внимание, что функции обратного вызова WriteCompletionRoutine и ReadCompletionRoutine являются пустыми функциями обратного вызова. Они могут быть использованы для обработки завершения асинхронных операций, если это необходимо.
+Пожалуйста, убедитесь, что COM-порт (например, COM1) и настройки соответствуют вашей конфигурации. Также убедитесь, что у вас установлены необходимые драйверы для COM-порта и Keithley 2430.
 
-Проверьте этот обновленный код с использованием асинхронной передачи SCPI команд для установки напряжения и измерения тока с Keithley 2400.
+Программа открывает COM-порт, устанавливает конфигурацию порта, отправляет SCPI команды для получения ID устройства, выставления напряжения и тока, а затем считывает постоянный ток и выводит его на консоль, обновляя значение каждую секунду.
 
-9171 из 16384
+890 из 16384
