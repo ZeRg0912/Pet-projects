@@ -1,4 +1,4 @@
-#include "GDS-820.h"
+/*#include "GDS-820.h"
 
 PORT openCOMPort(const char* portName) {
 	return CreateFile(portName,
@@ -42,7 +42,7 @@ bool closeCOMPort(PORT hSerial) {
 	return CloseHandle(hSerial);
 }
 
-int main() {
+int main1() {
 	setlocale(LC_ALL, "RUSSIAN");
 	system("chcp 1251");
 	system("cls");
@@ -86,4 +86,4 @@ int main() {
 	closeCOMPort(hSerial);
 
 	return 0;
-}
+}*/
