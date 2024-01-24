@@ -137,8 +137,14 @@ bool SetFunc(PORT SerialPort, const char* data) {
 }
 
 // ИСТОЧНИК НАПРЯЖЕНИЯ
+//
 // 
-// Установить значение напряжения
+// 
+//  MODE FIXED добавить!!!!!!!!!!!!!!
+//
+// 
+// 
+//  Установить значение напряжения
 bool SetVolt(PORT SerialPort, int value) {
 	DWORD bytesWritten;
 	TCHAR command[100];
