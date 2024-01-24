@@ -8,6 +8,9 @@
 #define STOP_BITS ONESTOPBIT;
 #define PARITY NOPARITY;
 
+#define VOLT "VOLT"
+#define CURR "CURR"
+
 typedef HANDLE PORT;
 
 // Открыть порт
