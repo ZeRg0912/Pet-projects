@@ -150,6 +150,7 @@ bool SetVolt(PORT SerialPort, int value) {
 bool SetCurrProt(PORT SerialPort, double value) {
 	DWORD bytesWritten;
 	TCHAR command[100];
+	//wsprintf(command, TEXT("SENS:CURR:RANG:AUTO ON\n"));
 	wsprintf(command, TEXT("SENS:CURR:RANG "), value / 100, TEXT("\n"));
 	WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
 	wsprintf(command, TEXT("SENS:CURR:PROT "), value / 1000, TEXT("\n"));
@@ -171,6 +172,7 @@ bool SetCurr(PORT SerialPort, double value) {
 bool SetVoltProt(PORT SerialPort, int value) {
 	DWORD bytesWritten;
 	TCHAR command[100];
+	//wsprintf(command, TEXT("SENS:VOLT:RANG:AUTO ON\n"));
 	wsprintf(command, TEXT("SENS:VOLT:RANG "), value + 5, TEXT("\n"));
 	WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
 	wsprintf(command, TEXT("SENS:VOLT:PROT "), value, TEXT("\n"));
