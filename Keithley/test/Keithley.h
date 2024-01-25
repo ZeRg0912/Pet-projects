@@ -21,9 +21,9 @@ typedef HANDLE PORT;
 class Keithley {
 protected:
 	PORT device;
-	char* ReadBuffer = new char[256] {NULL};
+	char* ReadBuffer;
 public:
-	Keithley(int port) {
+	Keithley(int port) : ReadBuffer(new char[256] {NULL}) {
 		device = OpenPort(port);
 	}
 	~Keithley() {

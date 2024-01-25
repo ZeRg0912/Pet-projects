@@ -206,7 +206,7 @@ char* Keithley::DisplayVolts() {
 	//WriteFile(device, readVolts, strlen(readVolts), &bytesWritten, NULL);
 	//Sleep(10);
 	WriteFile(device, displayVolts, strlen(displayVolts), &bytesWritten, NULL);
-	ReadFile(device, &ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
 	//ReadBuffer[bytesRead] = '\0';
 	return ReadBuffer;
 }
@@ -221,7 +221,7 @@ char* Keithley::DisplayCurr() {
 	//WriteFile(device, readCurr, strlen(readCurr), &bytesWritten, NULL);
 	//Sleep(10);
 	WriteFile(device, displayCurr, strlen(displayCurr), &bytesWritten, NULL);
-	ReadFile(device, &ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
 
 	//ReadBuffer[bytesRead] = '\0';
 
@@ -237,7 +237,7 @@ char* Keithley::ReadVolt() {
 
 	WriteFile(device, readVolt, strlen(readVolt), &bytesWritten, NULL);
 	WriteFile(device, readCommand, strlen(readCommand), &bytesWritten, NULL);
-	ReadFile(device, &ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
 	Sleep(50);
 
 	return ReadBuffer;
