@@ -6,15 +6,25 @@ int main() {
     system("chcp 1251");
     system("cls");
 
-    PORT Keithley = OpenPort(13);
+    Keithley device1(13);
     
-    ConfigPort(Keithley);
-    SetFunc(Keithley, VOLT);
-    SetVolt(Keithley, 5);
-    SetCurrProt(Keithley, 50);
-    OutputOn(Keithley);
+    device1.ConfigPort();
+    device1.SetFunc(VOLT);
+    device1.SetVolt(10);
+    device1.SetCurrProt(50);
+    device1.OutputOn();
+    Sleep(50);
 
-    PrintRead(ReadFromPort(Keithley));
+    for (int i = 0; i < 10; i++) {
+        device1.ReadFromPort();
+        Sleep(10);
+        device1.PrintRead();
+        Sleep(190);
+    }
+
+    device1.OutputOff();
+
+    device1.ClosePort();
 
     return 0;
 }

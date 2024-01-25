@@ -1,7 +1,7 @@
 #include "Keithley.h"
 
 // Открыть порт
-PORT OpenPort(int portName) {
+PORT Keithley::OpenPort(int portName) {
     PORT port;
     TCHAR comname[100];
     wsprintf(comname, TEXT("\\\\.\\COM%d"), portName);
@@ -18,83 +18,81 @@ PORT OpenPort(int portName) {
 }
 
 // Настроить порт
-bool ConfigPort(PORT SerialPort) {
+bool Keithley::ConfigPort() {
 	DCB dcb = { 0 };
 	dcb.DCBlength = sizeof(dcb);
-	if (!GetCommState(SerialPort, &dcb)) {
+	if (!GetCommState(device, &dcb)) {
 		return false;
 	}
-
 	dcb.BaudRate = BAUD_RATE_57600;
 	dcb.ByteSize = BYTE_SIZE;
 	dcb.StopBits = STOP_BITS;
 	dcb.Parity = PARITY;
 
-	if (!SetCommState(SerialPort, &dcb)) {
+	if (!SetCommState(device, &dcb)) {
 		return false;
 	}
-
 	return true;
 }
 
-bool SetBaudRate(PORT SerialPort, int BaudRate) {
+bool Keithley::SetBaudRate(int BaudRate) {
 	DCB dcb;
 	dcb.DCBlength = sizeof(dcb);
-	if (!GetCommState(SerialPort, &dcb)) {
+	if (!GetCommState(device, &dcb)) {
 		return false;
 	}
 
 	dcb.BaudRate = BaudRate;
 
-	if (!SetCommState(SerialPort, &dcb)) {
+	if (!SetCommState(device, &dcb)) {
 		return false;
 	}
 
 	return true;
 }
 
-bool SetByteSize(PORT SerialPort, int ByteSize) {
+bool Keithley::SetByteSize(int ByteSize) {
 	DCB dcb;
 	dcb.DCBlength = sizeof(dcb);
-	if (!GetCommState(SerialPort, &dcb)) {
+	if (!GetCommState(device, &dcb)) {
 		return false;
 	}
 
 	dcb.ByteSize = ByteSize;
 
-	if (!SetCommState(SerialPort, &dcb)) {
+	if (!SetCommState(device, &dcb)) {
 		return false;
 	}
 
 	return true;
 }
 
-bool SetStopBits(PORT SerialPort, int StopBits) {
+bool Keithley::SetStopBits(int StopBits) {
 	DCB dcb;
 	dcb.DCBlength = sizeof(dcb);
-	if (!GetCommState(SerialPort, &dcb)) {
+	if (!GetCommState(device, &dcb)) {
 		return false;
 	}
 
 	dcb.StopBits = StopBits;
 
-	if (!SetCommState(SerialPort, &dcb)) {
+	if (!SetCommState(device, &dcb)) {
 		return false;
 	}
 
 	return true;
 }
 
-bool SetParity(PORT SerialPort, int Parity) {
+bool Keithley::SetParity(int Parity) {
 	DCB dcb;
 	dcb.DCBlength = sizeof(dcb);
-	if (!GetCommState(SerialPort, &dcb)) {
+	if (!GetCommState(device, &dcb)) {
 		return false;
 	}
 
 	dcb.Parity = Parity;
 
-	if (!SetCommState(SerialPort, &dcb)) {
+	if (!SetCommState(device, &dcb)) {
 		return false;
 	}
 
@@ -102,121 +100,122 @@ bool SetParity(PORT SerialPort, int Parity) {
 }
 
 // Команда записи
-bool WriteToPort(PORT SerialPort, const wchar_t* command) {
+bool Keithley::WriteToPort(const char* command) {
 	DWORD bytesWritten;
-	return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
+	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
 }
 
 // Сброс
-bool RST(PORT SerialPort) {
+bool Keithley::RST() {
 	DWORD bytesWritten;
 	const char* RST = "*RST\n";
-	return WriteFile(SerialPort, RST, strlen(RST), &bytesWritten, NULL);
+	return WriteFile(device, RST, strlen(RST), &bytesWritten, NULL);
 }
 
 // Включить выход
-bool OutputOn(PORT SerialPort) {
+bool Keithley::OutputOn() {
 	DWORD bytesWritten;
 	const char* Output = "OUTP ON\n";
-	return WriteFile(SerialPort, Output, strlen(Output), &bytesWritten, NULL);
+	return WriteFile(device, Output, strlen(Output), &bytesWritten, NULL);
 }
 
 // Выключить выход
-bool OutputOff(PORT SerialPort) {
+bool Keithley::OutputOff() {
 	DWORD bytesWritten;
 	const char* Output = "OUTP OFF\n";
-	return WriteFile(SerialPort, Output, strlen(Output), &bytesWritten, NULL);
+	return WriteFile(device, Output, strlen(Output), &bytesWritten, NULL);
 }
 
 // Выбор режима
-bool SetFunc(PORT SerialPort, const char* data) {
+bool Keithley::SetFunc(const char* data) {
 	DWORD bytesWritten;
-	TCHAR command[100];
-	wsprintf(command, TEXT("SOUR:FUNC "), data, TEXT("\n"));
-	WriteToPort(SerialPort, command);
-	command[100] = { 0 };
-	wsprintf(command, TEXT("SOUR:"), data, TEXT(":MODE FIXED\n"));
-	WriteToPort(SerialPort, command);
-	//return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
+	std::string temp = "SOUR:FUNC " + std::string(data) + "\n";
+	const char* command = temp.c_str();
+	WriteToPort(command);
+	memset(&command, 0, sizeof(command));
+	temp = "SOUR:" + std::string(data) + ":MODE FIXED\n";
+	command = temp.c_str();
+	return WriteToPort(command);
 }
 
 // ИСТОЧНИК НАПРЯЖЕНИЯ
 //
-// 
-// 
-//  MODE FIXED добавить!!!!!!!!!!!!!!
-//
-// 
-// 
 //  Установить значение напряжения
-bool SetVolt(PORT SerialPort, double value) {
+bool Keithley::SetVolt(double value) {
 	DWORD bytesWritten;
-	TCHAR command[100];
-	wsprintf(command, TEXT("SOUR:VOLT:LEV "), value, TEXT("\n"));
-	return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
+	std::string temp = "SOUR:VOLT " + std::to_string(value) + "\n";
+	const char* command = temp.c_str();
+	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
 }
 
 // Установить значение лимита тока
-bool SetCurrProt(PORT SerialPort, double value) {
+bool Keithley::SetCurrProt(double value) {
 	DWORD bytesWritten;
-	TCHAR command[100];
-	//wsprintf(command, TEXT("SENS:CURR:RANG:AUTO ON\n"));
-	wsprintf(command, TEXT("SENS:CURR:RANG "), value / 100, TEXT("\n"));
-	WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
-	wsprintf(command, TEXT("SENS:CURR:PROT "), value / 1000, TEXT("\n"));
-	return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
+	std::string temp = "SENS:CURR:RANG:AUTO ON\n";
+	const char* command = temp.c_str();
+	WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+
+	//temp = "SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
+	//command = temp.c_str();
+	//std::cout << value / 100 << std::endl;
+	//WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+
+	temp = "SENS:CURR:PROT " + std::to_string(value / 1000) + "\n";
+	std::replace(temp.begin(), temp.end(), ',', '.');
+	command = temp.c_str();
+	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
 }
 
 
 // ИСТОЧНИК ТОКА
 // 
 // Установить значение тока
-bool SetCurr(PORT SerialPort, double value) {
+bool Keithley::SetCurr(double value) {
 	DWORD bytesWritten;
 	TCHAR command[100];
 	wsprintf(command, TEXT("SOUR:CURR:LEV "), value / 1000, TEXT("\n"));
-	return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
+	return WriteFile(device, command, wcslen(command), &bytesWritten, NULL);
 }
 
 // Установить значение лимита напряжения
-bool SetVoltProt(PORT SerialPort, int value) {
+bool Keithley::SetVoltProt(double value) {
 	DWORD bytesWritten;
 	TCHAR command[100];
 	//wsprintf(command, TEXT("SENS:VOLT:RANG:AUTO ON\n"));
 	wsprintf(command, TEXT("SENS:VOLT:RANG "), value + 5, TEXT("\n"));
-	WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
+	WriteFile(device, command, wcslen(command), &bytesWritten, NULL);
 	wsprintf(command, TEXT("SENS:VOLT:PROT "), value, TEXT("\n"));
-	return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
+	return WriteFile(device, command, wcslen(command), &bytesWritten, NULL);
 }
 
 // Команда чтения
-char* ReadFromPort(PORT SerialPort) {
+char* Keithley::ReadFromPort() {
 	const char* readCommand = "READ?\n";
+	const char* readVolts = "READ?\n";
+	const char* readCurr = "READ?\n";
 	DWORD bytesWritten;
 	DWORD bytesRead;
-	char buffer[256]{ 0 };
-	if (WriteFile(SerialPort, readCommand, strlen(readCommand), &bytesWritten, NULL)) {
-		if (ReadFile(SerialPort, buffer, sizeof(buffer), &bytesRead, NULL)) {
-			return buffer;
-		} else return false;			
-	} else return false;
+	memset(ReadBuffer, 0, sizeof(ReadBuffer));
+	WriteFile(device, readCommand, strlen(readCommand), &bytesWritten, NULL);
+	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+	return ReadBuffer;
 }
 
 // Вывод на консоль значений Vcc & Icc
-void PrintRead(char* buffer) {
+void Keithley::PrintRead() {
 	std::cout << "VCC = ";
-	for (int j = 0; j < 13; j++) {
-		std::cout << buffer[j];
+	for (int i = 0; i < 13; i++) {
+		std::cout << ReadBuffer[i];
 	}
 	std::cout << " ||| ";
 	std::cout << "ICC = ";
-	for (int j = 15; j < 27; j++) {
-		std::cout << buffer[j];
+	for (int i = 15; i < 27; i++) {
+		std::cout << ReadBuffer[i];
 	}
 	std::cout << std::endl;
 }
 
 // Закрыть порт
-bool closePort(PORT SerialPort) {
-	return CloseHandle(SerialPort);
+bool Keithley::ClosePort() {
+	return CloseHandle(device);
 }
