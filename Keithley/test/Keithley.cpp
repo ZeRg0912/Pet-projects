@@ -128,7 +128,6 @@ bool Keithley::OutputOff() {
 
 // Выбор режима
 bool Keithley::SetFunc(const char* data) {
-	DWORD bytesWritten;
 	std::string temp = "SOUR:FUNC " + std::string(data) + "\n";
 	const char* command = temp.c_str();
 	WriteToPort(command);
@@ -172,33 +171,114 @@ bool Keithley::SetCurrProt(double value) {
 // Установить значение тока
 bool Keithley::SetCurr(double value) {
 	DWORD bytesWritten;
-	TCHAR command[100];
-	wsprintf(command, TEXT("SOUR:CURR:LEV "), value / 1000, TEXT("\n"));
-	return WriteFile(device, command, wcslen(command), &bytesWritten, NULL);
+	std::string temp = "SOUR:CURR " + std::to_string(value / 1000) + "\n";
+	const char* command = temp.c_str();
+	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
 }
 
 // Установить значение лимита напряжения
 bool Keithley::SetVoltProt(double value) {
 	DWORD bytesWritten;
-	TCHAR command[100];
-	//wsprintf(command, TEXT("SENS:VOLT:RANG:AUTO ON\n"));
-	wsprintf(command, TEXT("SENS:VOLT:RANG "), value + 5, TEXT("\n"));
-	WriteFile(device, command, wcslen(command), &bytesWritten, NULL);
-	wsprintf(command, TEXT("SENS:VOLT:PROT "), value, TEXT("\n"));
-	return WriteFile(device, command, wcslen(command), &bytesWritten, NULL);
+	std::string temp = "SENS:VOLT:RANG:AUTO ON\n";
+	const char* command = temp.c_str();
+	WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+
+	//temp = "SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
+	//command = temp.c_str();
+	//std::cout << value / 100 << std::endl;
+	//WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+
+	temp = "SENS:VOLT:PROT " + std::to_string(value + 5) + "\n";
+	std::replace(temp.begin(), temp.end(), ',', '.');
+	command = temp.c_str();
+	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+}
+
+// Команды отображения на приборе
+char* Keithley::DisplayVolts() {
+	DWORD bytesWritten; 
+	DWORD bytesRead;
+	const char* displayVolts = "MEAS:VOLT?\n";
+	const char* readVolts = "FORM:ELEM VOLT\n";
+
+	memset(ReadBuffer, 0, sizeof(ReadBuffer));
+
+	//WriteFile(device, readVolts, strlen(readVolts), &bytesWritten, NULL);
+	//Sleep(10);
+	WriteFile(device, displayVolts, strlen(displayVolts), &bytesWritten, NULL);
+	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+	//ReadBuffer[bytesRead] = '\0';
+	return ReadBuffer;
+}
+
+char* Keithley::DisplayCurr() {
+	DWORD bytesWritten;
+	DWORD bytesRead;
+	const char* displayCurr = "MEAS:CURR?\n";
+
+	memset(ReadBuffer, 0, sizeof(ReadBuffer));
+
+	//WriteFile(device, readCurr, strlen(readCurr), &bytesWritten, NULL);
+	//Sleep(10);
+	WriteFile(device, displayCurr, strlen(displayCurr), &bytesWritten, NULL);
+	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+
+	//ReadBuffer[bytesRead] = '\0';
+
+	return ReadBuffer;
 }
 
 // Команда чтения
-char* Keithley::ReadFromPort() {
-	const char* readCommand = "READ?\n";
-	const char* readVolts = "READ?\n";
-	const char* readCurr = "READ?\n";
+char* Keithley::ReadVolt() {
 	DWORD bytesWritten;
 	DWORD bytesRead;
-	memset(ReadBuffer, 0, sizeof(ReadBuffer));
+	const char* readCommand = "READ?\n";
+	const char* readVolt = "FORM:ELEM VOLT\n";
+
+	WriteFile(device, readVolt, strlen(readVolt), &bytesWritten, NULL);
 	WriteFile(device, readCommand, strlen(readCommand), &bytesWritten, NULL);
 	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+	Sleep(50);
+
 	return ReadBuffer;
+}
+
+char* Keithley::ReadCurr() {
+	DWORD bytesWritten;
+	DWORD bytesRead;
+	const char* readCommand = "READ?\n";
+	const char* readCurr = "FORM:ELEM CURR\n";
+
+	WriteFile(device, readCurr, strlen(readCurr), &bytesWritten, NULL);
+	WriteFile(device, readCommand, strlen(readCommand), &bytesWritten, NULL);
+	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+	Sleep(50);
+
+	return ReadBuffer;
+}
+
+std::string Keithley::ReadFromPort() {
+	std::string info;
+	std::string vcc;
+	std::string icc;
+
+	for (int i = 0; i < 10; i++) {
+		memset(ReadBuffer, 0, sizeof(ReadBuffer));
+		info = "";
+		std::cout << "Measurment " << i + 1 << ": " << std::endl;
+		vcc = ReadVolt();
+		icc = ReadCurr(); 
+		//std::replace(vcc.begin(), vcc.end(), '\0', ' ');
+		//std::replace(icc.begin(), icc.end(), '\0', ' ');
+		//info = "Vcc = " + vcc + "\nIcc = " + icc;
+
+		//std::cout << info << std::endl;
+		std::cout << vcc << std::endl;
+		//std::cout << icc << std::endl;
+
+		Sleep(150);
+	}	
+	return info;
 }
 
 // Вывод на консоль значений Vcc & Icc

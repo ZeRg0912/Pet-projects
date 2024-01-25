@@ -15,12 +15,7 @@ int main() {
     device1.OutputOn();
     Sleep(50);
 
-    for (int i = 0; i < 10; i++) {
-        device1.ReadFromPort();
-        Sleep(10);
-        device1.PrintRead();
-        Sleep(190);
-    }
+    device1.ReadFromPort();
 
     device1.OutputOff();
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include <algorithm>
+#include <cstring>
 
 // Базовы значения порта
 #define BAUD_RATE_9600 CBR_9600;
@@ -20,7 +21,7 @@ typedef HANDLE PORT;
 class Keithley {
 protected:
 	PORT device;
-	char ReadBuffer[256];
+	char ReadBuffer[256] = { NULL };
 public:
 	Keithley(int port) {
 		device = OpenPort(port);
@@ -79,8 +80,17 @@ public:
 	// Установить значение лимита напряжения
 	bool SetVoltProt(double value);
 
+	// Команды отображения на приборе
+	char* DisplayVolts();
+
+	char* DisplayCurr();
+
 	// Команда чтения
-	char* ReadFromPort();
+	char* ReadVolt();
+
+	char* ReadCurr();
+
+	std::string ReadFromPort();
 
 	// Вывод на консоль значений Vcc & Icc
 	void PrintRead();
