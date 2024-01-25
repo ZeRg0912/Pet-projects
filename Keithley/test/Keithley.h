@@ -3,7 +3,8 @@
 #include <windows.h>
 
 // Базовы значения порта
-#define BAUD_RATE CBR_9600;
+#define BAUD_RATE_9600 CBR_9600;
+#define BAUD_RATE_57600 CBR_57600;
 #define BYTE_SIZE 8;
 #define STOP_BITS ONESTOPBIT;
 #define PARITY NOPARITY;
@@ -28,7 +29,7 @@ bool SetStopBits(PORT SerialPort, int StopBits);
 bool SetParity(PORT SerialPort, int Parity);
 
 // Команда записи
-bool WriteToPort(PORT SerialPort, const char* data);
+bool WriteToPort(PORT SerialPort, const wchar_t* data);
 
 // Сброс
 bool RST(PORT SerialPort);
@@ -45,10 +46,10 @@ bool SetFunc(PORT SerialPort, const char* data);
 // ИСТОЧНИК НАПРЯЖЕНИЯ
 // 
 // Установить значение напряжения
-bool SetVolt(PORT SerialPort, int value);
+bool SetVolt(PORT SerialPort, double value);
 
 // Установить значение лимита тока
-bool SetCurrProt(PORT SerialPort, int value);
+bool SetCurrProt(PORT SerialPort, double value);
 
 
 // ИСТОЧНИК ТОКА
@@ -57,10 +58,10 @@ bool SetCurrProt(PORT SerialPort, int value);
 bool SetVolt(PORT SerialPort, double value);
 
 // Установить значение лимита напряжения
-bool SetCurrProt(PORT SerialPort, int value);
+bool SetCurrProt(PORT SerialPort, double value);
 
 // Команда чтения
-char* ReadFromPort(PORT SerialPort, const char* data);
+char* ReadFromPort(PORT SerialPort);
 
 // Вывод на консоль значений Vcc & Icc
 void PrintRead(char* buffer);

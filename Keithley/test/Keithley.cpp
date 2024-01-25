@@ -25,7 +25,7 @@ bool ConfigPort(PORT SerialPort) {
 		return false;
 	}
 
-	dcb.BaudRate = BAUD_RATE;
+	dcb.BaudRate = BAUD_RATE_57600;
 	dcb.ByteSize = BYTE_SIZE;
 	dcb.StopBits = STOP_BITS;
 	dcb.Parity = PARITY;
@@ -102,9 +102,9 @@ bool SetParity(PORT SerialPort, int Parity) {
 }
 
 // Команда записи
-bool WriteToPort(PORT SerialPort, const char* command) {
+bool WriteToPort(PORT SerialPort, const wchar_t* command) {
 	DWORD bytesWritten;
-	return WriteFile(SerialPort, command, strlen(command), &bytesWritten, NULL);
+	return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
 }
 
 // Сброс
@@ -133,7 +133,11 @@ bool SetFunc(PORT SerialPort, const char* data) {
 	DWORD bytesWritten;
 	TCHAR command[100];
 	wsprintf(command, TEXT("SOUR:FUNC "), data, TEXT("\n"));
-	return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
+	WriteToPort(SerialPort, command);
+	command[100] = { 0 };
+	wsprintf(command, TEXT("SOUR:"), data, TEXT(":MODE FIXED\n"));
+	WriteToPort(SerialPort, command);
+	//return WriteFile(SerialPort, command, wcslen(command), &bytesWritten, NULL);
 }
 
 // ИСТОЧНИК НАПРЯЖЕНИЯ
@@ -145,7 +149,7 @@ bool SetFunc(PORT SerialPort, const char* data) {
 // 
 // 
 //  Установить значение напряжения
-bool SetVolt(PORT SerialPort, int value) {
+bool SetVolt(PORT SerialPort, double value) {
 	DWORD bytesWritten;
 	TCHAR command[100];
 	wsprintf(command, TEXT("SOUR:VOLT:LEV "), value, TEXT("\n"));
@@ -186,7 +190,7 @@ bool SetVoltProt(PORT SerialPort, int value) {
 }
 
 // Команда чтения
-char* ReadFromPort(PORT SerialPort, char* command) {
+char* ReadFromPort(PORT SerialPort) {
 	const char* readCommand = "READ?\n";
 	DWORD bytesWritten;
 	DWORD bytesRead;
