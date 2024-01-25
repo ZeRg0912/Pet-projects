@@ -254,6 +254,8 @@ char* Keithley::ReadCurr() {
 	ReadFile(device, &ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
 	Sleep(50);
 
+	//std::string str(ReadBuffer); - возврат строкой
+
 	return ReadBuffer;
 }
 

@@ -27,6 +27,7 @@ public:
 		device = OpenPort(port);
 	}
 	~Keithley() {
+		delete[] ReadBuffer;
 		ClosePort();
 	}
 
