@@ -15,19 +15,20 @@
 
 #define VOLT "VOLT"
 #define CURR "CURR"
+#define RES "RES"
 
 typedef HANDLE PORT;
 
 class Keithley {
 protected:
 	PORT device;
-	char* ReadBuffer;
+	char ReadBuffer[2048] = { NULL };
 public:
-	Keithley(int port) : ReadBuffer(new char[256] {NULL}) {
-		device = OpenPort(port);
+	Keithley(int port) : device(OpenPort(port)) {
+		//device = OpenPort(port);
 	}
 	~Keithley() {
-		delete[] ReadBuffer;
+		//delete[] ReadBuffer;
 		ClosePort();
 	}
 
@@ -51,6 +52,9 @@ public:
 
 	// Команда записи
 	bool WriteToPort(const char* data);
+	
+	// Команда чтения
+	bool ReadFromPort();
 
 	// Сброс
 	bool RST();
@@ -62,7 +66,10 @@ public:
 	bool OutputOff();
 
 	// Выбор режима
-	bool SetFunc(const char* data);
+	bool SetFunc(std::string data);
+
+	// Установка скорости чтения
+	bool SetReadSpeed(double value);
 
 	// ИСТОЧНИК НАПРЯЖЕНИЯ
 	// 
@@ -91,7 +98,7 @@ public:
 
 	char* ReadCurr();
 
-	std::string ReadFromPort();
+	std::string ReadVoltCurr(int num);
 
 	// Вывод на консоль значений Vcc & Icc
 	void PrintRead();

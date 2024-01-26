@@ -12,10 +12,11 @@ int main() {
     device1.SetFunc(VOLT);
     device1.SetVolt(10);
     device1.SetCurrProt(50);
+    //device1.SetReadSpeed(0.5);
     device1.OutputOn();
-    Sleep(50);
+    Sleep(300);
 
-    device1.ReadFromPort();
+    device1.ReadVoltCurr(30);
 
     device1.OutputOff();
 

@@ -2,12 +2,12 @@
 
 // Открыть порт
 PORT Keithley::OpenPort(int portName) {
-    PORT port;
+	PORT port{};
     TCHAR comname[100];
     wsprintf(comname, TEXT("\\\\.\\COM%d"), portName);
 
     // Открытие COM-порта
-    return CreateFileW(comname, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    return CreateFile(comname, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     if (port == INVALID_HANDLE_VALUE)
     {
         std::wcout << L"Ошибка открытия COM-порта" << std::endl;
@@ -15,6 +15,18 @@ PORT Keithley::OpenPort(int portName) {
     else {
         return port;
     }
+}
+
+// Команда записи
+bool Keithley::WriteToPort(const char* command) {
+	DWORD bytesWritten;
+	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+}
+
+// Команда чтения
+bool Keithley::ReadFromPort() {
+	DWORD bytesRead;
+	return ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
 }
 
 // Настроить порт
@@ -36,7 +48,7 @@ bool Keithley::ConfigPort() {
 }
 
 bool Keithley::SetBaudRate(int BaudRate) {
-	DCB dcb;
+	DCB dcb{};
 	dcb.DCBlength = sizeof(dcb);
 	if (!GetCommState(device, &dcb)) {
 		return false;
@@ -52,7 +64,7 @@ bool Keithley::SetBaudRate(int BaudRate) {
 }
 
 bool Keithley::SetByteSize(int ByteSize) {
-	DCB dcb;
+	DCB dcb{};
 	dcb.DCBlength = sizeof(dcb);
 	if (!GetCommState(device, &dcb)) {
 		return false;
@@ -68,7 +80,7 @@ bool Keithley::SetByteSize(int ByteSize) {
 }
 
 bool Keithley::SetStopBits(int StopBits) {
-	DCB dcb;
+	DCB dcb{};
 	dcb.DCBlength = sizeof(dcb);
 	if (!GetCommState(device, &dcb)) {
 		return false;
@@ -84,7 +96,7 @@ bool Keithley::SetStopBits(int StopBits) {
 }
 
 bool Keithley::SetParity(int Parity) {
-	DCB dcb;
+	DCB dcb{};
 	dcb.DCBlength = sizeof(dcb);
 	if (!GetCommState(device, &dcb)) {
 		return false;
@@ -99,70 +111,57 @@ bool Keithley::SetParity(int Parity) {
 	return true;
 }
 
-// Команда записи
-bool Keithley::WriteToPort(const char* command) {
-	DWORD bytesWritten;
-	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
-}
-
 // Сброс
 bool Keithley::RST() {
-	DWORD bytesWritten;
-	const char* RST = "*RST\n";
-	return WriteFile(device, RST, strlen(RST), &bytesWritten, NULL);
+	return WriteToPort("*RST\n");
 }
 
 // Включить выход
 bool Keithley::OutputOn() {
-	DWORD bytesWritten;
-	const char* Output = "OUTP ON\n";
-	return WriteFile(device, Output, strlen(Output), &bytesWritten, NULL);
+	return WriteToPort(":OUTP ON\n");
 }
 
 // Выключить выход
 bool Keithley::OutputOff() {
-	DWORD bytesWritten;
-	const char* Output = "OUTP OFF\n";
-	return WriteFile(device, Output, strlen(Output), &bytesWritten, NULL);
+	return WriteToPort(":OUTP OFF\n");
 }
 
 // Выбор режима
-bool Keithley::SetFunc(const char* data) {
-	std::string temp = "SOUR:FUNC " + std::string(data) + "\n";
-	const char* command = temp.c_str();
-	WriteToPort(command);
-	memset(&command, 0, sizeof(command));
-	temp = "SOUR:" + std::string(data) + ":MODE FIXED\n";
-	command = temp.c_str();
-	return WriteToPort(command);
+bool Keithley::SetFunc(std::string data) {
+	std::string command = ":SOUR:FUNC " + data + "\n";
+	WriteToPort(command.c_str());
+	command = ":SOUR:" + std::string(data) + ":MODE FIXED\n";
+	return WriteToPort(command.c_str());
+}
+
+// Установка скорости чтения
+bool Keithley::SetReadSpeed(double value) {
+	std::string command = ":SENS:VOLT:NPLC " + std::to_string(value) + "\n";
+	std::replace(command.begin(), command.end(), ',', '.');
+	return WriteToPort(command.c_str());
 }
 
 // ИСТОЧНИК НАПРЯЖЕНИЯ
 //
 //  Установить значение напряжения
 bool Keithley::SetVolt(double value) {
-	DWORD bytesWritten;
-	std::string temp = "SOUR:VOLT " + std::to_string(value) + "\n";
-	const char* command = temp.c_str();
-	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+	std::string command = ":SOUR:VOLT " + std::to_string(value) + "\n";
+	//WriteToPort("SOUR:DEL:AUTO ON\n");
+	return WriteToPort(command.c_str());
 }
 
 // Установить значение лимита тока
 bool Keithley::SetCurrProt(double value) {
-	DWORD bytesWritten;
-	std::string temp = "SENS:CURR:RANG:AUTO ON\n";
-	const char* command = temp.c_str();
-	WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+	std::string command = ":SENS:CURR:RANG:AUTO ON\n";
+	WriteToPort(command.c_str());
 
-	//temp = "SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
-	//command = temp.c_str();
+	command = ":SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
 	//std::cout << value / 100 << std::endl;
-	//WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+	//WriteToPort(command.c_str());
 
-	temp = "SENS:CURR:PROT " + std::to_string(value / 1000) + "\n";
-	std::replace(temp.begin(), temp.end(), ',', '.');
-	command = temp.c_str();
-	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+	command = ":SENS:CURR:PROT " + std::to_string(value / 1000) + "\n";
+	std::replace(command.begin(), command.end(), ',', '.');
+	return WriteToPort(command.c_str());
 }
 
 
@@ -170,115 +169,77 @@ bool Keithley::SetCurrProt(double value) {
 // 
 // Установить значение тока
 bool Keithley::SetCurr(double value) {
-	DWORD bytesWritten;
-	std::string temp = "SOUR:CURR " + std::to_string(value / 1000) + "\n";
-	const char* command = temp.c_str();
-	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+	std::string command = ":SOUR:CURR " + std::to_string(value / 1000) + "\n";
+	return WriteToPort(command.c_str());
 }
 
 // Установить значение лимита напряжения
 bool Keithley::SetVoltProt(double value) {
-	DWORD bytesWritten;
-	std::string temp = "SENS:VOLT:RANG:AUTO ON\n";
-	const char* command = temp.c_str();
-	WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+	std::string command = ":SENS:VOLT:RANG:AUTO ON\n";
+	WriteToPort(command.c_str());
 
 	//temp = "SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
 	//command = temp.c_str();
 	//std::cout << value / 100 << std::endl;
-	//WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+	//WriteToPort(command);
 
-	temp = "SENS:VOLT:PROT " + std::to_string(value + 5) + "\n";
-	std::replace(temp.begin(), temp.end(), ',', '.');
-	command = temp.c_str();
-	return WriteFile(device, command, strlen(command), &bytesWritten, NULL);
+	command = ":SENS:VOLT:PROT " + std::to_string(value + 5) + "\n";
+	std::replace(command.begin(), command.end(), ',', '.');
+	return WriteToPort(command.c_str());
 }
 
 // Команды отображения на приборе
 char* Keithley::DisplayVolts() {
-	DWORD bytesWritten; 
-	DWORD bytesRead;
-	const char* displayVolts = "MEAS:VOLT?\n";
-	const char* readVolts = "FORM:ELEM VOLT\n";
-
-	memset(ReadBuffer, 0, sizeof(ReadBuffer));
-
-	//WriteFile(device, readVolts, strlen(readVolts), &bytesWritten, NULL);
-	//Sleep(10);
-	WriteFile(device, displayVolts, strlen(displayVolts), &bytesWritten, NULL);
-	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
-	//ReadBuffer[bytesRead] = '\0';
+	WriteToPort("MEAS:VOLT?\n");
+	//ReadFromPort();
 	return ReadBuffer;
 }
 
 char* Keithley::DisplayCurr() {
-	DWORD bytesWritten;
-	DWORD bytesRead;
-	const char* displayCurr = "MEAS:CURR?\n";
-
-	memset(ReadBuffer, 0, sizeof(ReadBuffer));
-
-	//WriteFile(device, readCurr, strlen(readCurr), &bytesWritten, NULL);
-	//Sleep(10);
-	WriteFile(device, displayCurr, strlen(displayCurr), &bytesWritten, NULL);
-	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
-
-	//ReadBuffer[bytesRead] = '\0';
-
+	WriteToPort("MEAS:CURR?\n");
+	//ReadFromPort();
 	return ReadBuffer;
 }
 
 // Команда чтения
 char* Keithley::ReadVolt() {
-	DWORD bytesWritten;
-	DWORD bytesRead;
-	const char* readCommand = "READ?\n";
-	const char* readVolt = "FORM:ELEM VOLT\n";
-
-	WriteFile(device, readVolt, strlen(readVolt), &bytesWritten, NULL);
-	WriteFile(device, readCommand, strlen(readCommand), &bytesWritten, NULL);
-	ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
-	Sleep(50);
-
+	//Sleep(10);
+	WriteToPort(":FORM:ELEM VOLT\r");
+	WriteToPort(":SENS:FUNC 'VOLT'\r");
+	WriteToPort("READ?\n");
+	ReadFromPort();
+	Sleep(20);
 	return ReadBuffer;
 }
 
 char* Keithley::ReadCurr() {
-	DWORD bytesWritten;
-	DWORD bytesRead;
-	const char* readCommand = "READ?\n";
-	const char* readCurr = "FORM:ELEM CURR\n";
-
-	WriteFile(device, readCurr, strlen(readCurr), &bytesWritten, NULL);
-	WriteFile(device, readCommand, strlen(readCommand), &bytesWritten, NULL);
-	ReadFile(device, &ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
-	Sleep(50);
-
-	//std::string str(ReadBuffer); - возврат строкой
-
+	//Sleep(10);
+	WriteToPort(":FORM:ELEM CURR\r");
+	WriteToPort(":SENS:FUNC 'CURR'\r");
+	WriteToPort(":READ?\n");
+	ReadFromPort();
+	Sleep(20);
 	return ReadBuffer;
 }
 
-std::string Keithley::ReadFromPort() {
+std::string Keithley::ReadVoltCurr(int num) {
 	std::string info;
 	std::string vcc;
-	std::string icc;
+	std::string icc; 
 
-	for (int i = 0; i < 10; i++) {
-		memset(&ReadBuffer, 0, sizeof(ReadBuffer));
-		info = "";
-		std::cout << "Measurment " << i + 1 << ": " << std::endl;
+	for (int i = 0; i <= num; i++) {
 		vcc = ReadVolt();
-		icc = ReadCurr(); 
-		//std::replace(vcc.begin(), vcc.end(), '\0', ' ');
-		//std::replace(icc.begin(), icc.end(), '\0', ' ');
-		//info = "Vcc = " + vcc + "\nIcc = " + icc;
-
-		//std::cout << info << std::endl;
-		std::cout << vcc << std::endl;
-		//std::cout << icc << std::endl;
-
+		icc = ReadCurr();
+		if (i > 0) {
+			std::cout << "Measurment " << i << ": " << std::endl;
+			int pos = vcc.find('\n');
+			vcc = vcc.substr(0, pos - 1);
+			icc = icc.substr(pos + 1, (icc.length() - 1) / 2);
+			info = "VCC = " + vcc + "; ICC = " + icc + "\n";
+			std::cout << info;
+		}
 		Sleep(150);
+		memset(ReadBuffer, 0, sizeof(ReadBuffer));
 	}	
 	return info;
 }
