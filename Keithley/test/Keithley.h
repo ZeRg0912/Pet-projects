@@ -5,6 +5,8 @@
 #include <functional>
 #include <algorithm>
 #include <cstring>
+#include <iomanip>
+#include <sstream>
 
 // Базовы значения порта
 #define BAUD_RATE_9600 CBR_9600;
@@ -23,6 +25,7 @@ class Keithley {
 protected:
 	PORT device;
 	char ReadBuffer[2048] = { NULL };
+	char Command[2048] = { NULL };
 public:
 	Keithley(int port) : device(OpenPort(port)) {
 		//device = OpenPort(port);
@@ -50,6 +53,9 @@ public:
 
 	bool SetParity(int Parity);
 
+	// Сбросить время
+	bool ResetTime();
+
 	// Команда записи
 	bool WriteToPort(const char* data);
 	
@@ -69,24 +75,24 @@ public:
 	bool SetFunc(std::string data);
 
 	// Установка скорости чтения
-	bool SetReadSpeed(double value);
+	bool SetReadSpeed(float value);
 
 	// ИСТОЧНИК НАПРЯЖЕНИЯ
 	// 
 	// Установить значение напряжения
-	bool SetVolt(double value);
+	bool SetVolt(float value);
 
 	// Установить значение лимита тока
-	bool SetCurrProt(double value);
+	bool SetCurrProt(float value);
 
 
 	// ИСТОЧНИК ТОКА
 	// 
 	// Установить значение тока
-	bool SetCurr(double value);
+	bool SetCurr(float value);
 
 	// Установить значение лимита напряжения
-	bool SetVoltProt(double value);
+	bool SetVoltProt(float value);
 
 	// Команды отображения на приборе
 	char* DisplayVolts();

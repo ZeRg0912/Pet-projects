@@ -3,18 +3,18 @@
 // Открыть порт
 PORT Keithley::OpenPort(int portName) {
 	PORT port{};
-    TCHAR comname[100];
-    wsprintf(comname, TEXT("\\\\.\\COM%d"), portName);
+	TCHAR comname[100];
+	wsprintf(comname, TEXT("\\\\.\\COM%d"), portName);
 
-    // Открытие COM-порта
-    return CreateFile(comname, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-    if (port == INVALID_HANDLE_VALUE)
-    {
-        std::wcout << L"Ошибка открытия COM-порта" << std::endl;
-    }
-    else {
-        return port;
-    }
+	// Открытие COM-порта
+	return CreateFile(comname, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+	if (port == INVALID_HANDLE_VALUE)
+	{
+		std::cout << "Ошибка открытия COM-порта" << std::endl;
+	}
+	else {
+		return port;
+	}
 }
 
 // Команда записи
@@ -111,6 +111,11 @@ bool Keithley::SetParity(int Parity) {
 	return true;
 }
 
+// Сбросить время
+bool Keithley::ResetTime() {
+	return WriteToPort("SYST:TIME:RES\n");
+}
+
 // Сброс
 bool Keithley::RST() {
 	return WriteToPort("*RST\n");
@@ -135,7 +140,7 @@ bool Keithley::SetFunc(std::string data) {
 }
 
 // Установка скорости чтения
-bool Keithley::SetReadSpeed(double value) {
+bool Keithley::SetReadSpeed(float value) {
 	std::string command = ":SENS:VOLT:NPLC " + std::to_string(value) + "\n";
 	std::replace(command.begin(), command.end(), ',', '.');
 	return WriteToPort(command.c_str());
@@ -144,14 +149,15 @@ bool Keithley::SetReadSpeed(double value) {
 // ИСТОЧНИК НАПРЯЖЕНИЯ
 //
 //  Установить значение напряжения
-bool Keithley::SetVolt(double value) {
+bool Keithley::SetVolt(float value) {
 	std::string command = ":SOUR:VOLT " + std::to_string(value) + "\n";
+	std::replace(command.begin(), command.end(), ',', '.');
 	//WriteToPort("SOUR:DEL:AUTO ON\n");
 	return WriteToPort(command.c_str());
 }
 
 // Установить значение лимита тока
-bool Keithley::SetCurrProt(double value) {
+bool Keithley::SetCurrProt(float value) {
 	std::string command = ":SENS:CURR:RANG:AUTO ON\n";
 	WriteToPort(command.c_str());
 
@@ -168,13 +174,14 @@ bool Keithley::SetCurrProt(double value) {
 // ИСТОЧНИК ТОКА
 // 
 // Установить значение тока
-bool Keithley::SetCurr(double value) {
+bool Keithley::SetCurr(float value) {
 	std::string command = ":SOUR:CURR " + std::to_string(value / 1000) + "\n";
+	std::replace(command.begin(), command.end(), ',', '.');
 	return WriteToPort(command.c_str());
 }
 
 // Установить значение лимита напряжения
-bool Keithley::SetVoltProt(double value) {
+bool Keithley::SetVoltProt(float value) {
 	std::string command = ":SENS:VOLT:RANG:AUTO ON\n";
 	WriteToPort(command.c_str());
 
@@ -190,13 +197,13 @@ bool Keithley::SetVoltProt(double value) {
 
 // Команды отображения на приборе
 char* Keithley::DisplayVolts() {
-	WriteToPort("MEAS:VOLT?\n");
+	WriteToPort(":MEAS:VOLT?\n");
 	//ReadFromPort();
 	return ReadBuffer;
 }
 
 char* Keithley::DisplayCurr() {
-	WriteToPort("MEAS:CURR?\n");
+	WriteToPort(":MEAS:CURR?\n");
 	//ReadFromPort();
 	return ReadBuffer;
 }
@@ -224,23 +231,37 @@ char* Keithley::ReadCurr() {
 
 std::string Keithley::ReadVoltCurr(int num) {
 	std::string info;
-	std::string vcc;
-	std::string icc; 
+	std::string svcc;
+	std::string sicc;
+	std::string stime;
+	float time;
+	float vcc;
+	WriteToPort(":FORM:ELEM VOLT, CURR, TIME\n");
+	WriteToPort(":SENSE:FUNC 'VOLT', 'CURR'\n");
+	WriteToPort(":READ?\n");
+	Sleep(100);
+	for (int i = 1; i <= num; i++) {
+		std::cout << "Measurment #" << i << ": " << std::endl;
+		WriteToPort(":READ?\n");
+		ReadFromPort();
+		info = ReadBuffer;
+		svcc = info.substr(0, 13);
+		sicc = info.substr(15, 13);
+		stime = info.substr(29, 13);
 
-	for (int i = 0; i <= num; i++) {
-		vcc = ReadVolt();
-		icc = ReadCurr();
-		if (i > 0) {
-			std::cout << "Measurment " << i << ": " << std::endl;
-			int pos = vcc.find('\n');
-			vcc = vcc.substr(0, pos - 1);
-			icc = icc.substr(pos + 1, (icc.length() - 1) / 2);
-			info = "VCC = " + vcc + "; ICC = " + icc + "\n";
-			std::cout << info;
-		}
-		Sleep(150);
+		std::istringstream iss_time(stime);
+		iss_time >> time;
+		std::istringstream iss_vcc(svcc);
+		iss_vcc >> vcc;
+
+		std::cout << "TIME: " << std::fixed << std::setprecision(3) << time << " Seconds" << std::endl;
+		std::cout << "Vcc = " << std::fixed << std::setprecision(4) << vcc << " Volts" << std::endl;
+		std::cout << "Icc = " << sicc << " Ampers" << std::endl;
+		//std::cout << info << std::endl;
 		memset(ReadBuffer, 0, sizeof(ReadBuffer));
-	}	
+		Sleep(50);
+		system("cls");
+	}
 	return info;
 }
 

@@ -7,16 +7,16 @@ int main() {
     system("cls");
 
     Keithley device1(13);
-    
     device1.ConfigPort();
     device1.SetFunc(VOLT);
-    device1.SetVolt(10);
-    device1.SetCurrProt(50);
-    //device1.SetReadSpeed(0.5);
+    device1.SetVolt(5.4262);
+    device1.SetCurrProt(10);
+    device1.SetReadSpeed(0.01);
+    device1.ResetTime();
     device1.OutputOn();
     Sleep(300);
 
-    device1.ReadVoltCurr(30);
+    device1.ReadVoltCurr(2000);
 
     device1.OutputOff();
 
