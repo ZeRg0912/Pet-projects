@@ -283,3 +283,36 @@ void Keithley::PrintRead() {
 bool Keithley::ClosePort() {
 	return CloseHandle(device);
 }
+
+void Start(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles) {
+	Keithley device;
+	if (!device.OpenPort(numPort)) {
+		std::cout << "Can't open COMport\n";
+		return;
+	}
+	device.ConfigPort();
+	device.SetFunc(Source);
+	if (Source == VOLT) {
+		device.SetVolt(SourceValue);
+		device.SetCurrProt(ProtValue);
+	}
+	else if (Source == CURR) {
+		device.SetCurr(SourceValue);
+		device.SetVoltProt(ProtValue);
+	}
+	else {
+		std::cout << "INCORRECT SOURCE TYPE\n";
+		device.ClosePort();
+		return;
+	}
+	device.SetReadSpeed(0.01);
+	device.ResetTime();
+	device.OutputOn();
+	Sleep(300);
+
+	device.ReadVoltCurr(Cycles);
+
+	device.OutputOff();
+
+	device.ClosePort();
+}

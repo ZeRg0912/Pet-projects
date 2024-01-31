@@ -21,12 +21,17 @@
 
 typedef HANDLE PORT;
 
+void Start(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);
+
 class Keithley {
 protected:
 	PORT device;
 	char ReadBuffer[2048] = { NULL };
 	char Command[2048] = { NULL };
 public:
+	Keithley(){
+	//device = OpenPort(port);
+	}
 	Keithley(int port) : device(OpenPort(port)) {
 		//device = OpenPort(port);
 	}
