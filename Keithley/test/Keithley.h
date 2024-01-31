@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <limits>
 #include <windows.h>
 #include <string>
 #include <functional>
@@ -7,6 +8,7 @@
 #include <cstring>
 #include <iomanip>
 #include <sstream>
+#include <variant>
 
 // Базовы значения порта
 #define BAUD_RATE_9600 CBR_9600;
@@ -19,9 +21,40 @@
 #define CURR "CURR"
 #define RES "RES"
 
+#if defined(max)
+#undef max
+#endif
+
 typedef HANDLE PORT;
 
-void Start(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);
+void setcur(int x, int y);
+
+void Begin();
+
+void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);
+
+template <typename T>
+T getInput(const std::string& hint, bool positive_only = false) {
+	T input;
+	system("cls");
+	while (true) {
+		std::cout << "Введите " << hint << ": ";
+		if (std::cin >> input && (!positive_only || (positive_only && !(std::less<T>()(input, 0))))) {
+			break;
+		}
+		else {
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			if (positive_only) {
+				std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
+			}
+			else {
+				std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
+			}
+		}
+	}
+	return input;
+}
 
 class Keithley {
 protected:
@@ -29,11 +62,12 @@ protected:
 	char ReadBuffer[2048] = { NULL };
 	char Command[2048] = { NULL };
 public:
-	Keithley(){
-	//device = OpenPort(port);
-	}
 	Keithley(int port) : device(OpenPort(port)) {
 		//device = OpenPort(port);
+		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);   //Получение хендла
+		CONSOLE_CURSOR_INFO cursor = { 1, false };   // Число от 1 до 100 размер курсора в процентах
+		// false\true - видимость
+		SetConsoleCursorInfo(hCons, &cursor);  //Применение заданных параметров курсора
 	}
 	~Keithley() {
 		//delete[] ReadBuffer;
