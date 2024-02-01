@@ -313,7 +313,7 @@ bool Keithley::ClosePort() {
 
 
 
-void StartConfig(Keithley& device, std::string Source, float SourceValue, float ProtValue) {
+void StartConfig(Keithley device, std::string Source, float SourceValue, float ProtValue) {
 	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
 	if (device.GetPort() == INVALID_HANDLE_VALUE) {
 		device.SetEnable(false);
@@ -348,8 +348,8 @@ void StartConfig(Keithley& device, std::string Source, float SourceValue, float 
 
 
 
-void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles) {
-	Keithley device(numPort);
+void Init(int numPort, std::string PortName, std::string Source, float SourceValue, float ProtValue, int Cycles) {
+	Keithley device(numPort, PortName);
 	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
 	/*if (!device.OpenPort(numPort)) {
 		std::cout << "Can't open COMport\n";
@@ -390,11 +390,11 @@ void Init(int numPort, std::string Source, float SourceValue, float ProtValue, i
 
 
 
-void StartMeas(Keithley& obj, int cycle) {
+void StartMeas(Keithley obj, int cycle) {
 	std::cout << obj.ReadVoltCurr(cycle) << std::endl;
 }
 
-void Stop(Keithley& obj) {
+void Stop(Keithley obj) {
 	obj.OutputOff();
 	obj.ClosePort();
 }
@@ -407,18 +407,28 @@ void Begin() {
 
 	int quantity_devices = getInput<int>("Кол - во приборов", true);
 
-	for (int i = 0; i < quantity_devices; i++) {
-		port = getInput<int>("Номер COM - порта (0..20)", true); 
-		Keithley device(port);
+	//for (int i = 0; i < quantity_devices; i++) {
+	//	port = getInput<int>("Номер COM - порта (0..20)", true); 
+	//	Keithley device(port);
+	//	source = getInput<std::string>("Тип источника (Volt, Curr)");
+	//	source_value = getInput<float>("Значение источника (В, мА)");
+	//	prot_value = getInput<float>("Ограничение (В, мА)");
+	//	StartConfig(device, source, source_value, prot_value);
+	//	//if (device.GetEnable()) Devices.push_back(device);
+	//	//StartConfig(device, source, source_value, prot_value);
+	//}
+
+	for (int i = 1; i <= quantity_devices; i++) {
+		port = getInput<int>("Номер COM - порта (0..20)", true);
+		Devices.push_back(Keithley (port, ("Порт #" + i)));
+	}
+
+	for (auto& obj : Devices) {
 		source = getInput<std::string>("Тип источника (Volt, Curr)");
 		source_value = getInput<float>("Значение источника (В, мА)");
 		prot_value = getInput<float>("Ограничение (В, мА)");
-		StartConfig(device, source, source_value, prot_value);
-		if (device.GetEnable()) Devices.push_back(device);
-		//StartConfig(device, source, source_value, prot_value);
+		StartConfig(obj, source, source_value, prot_value);
 	}
-
-
 
 	cycles = getInput<int>("Кол - во замеров", true);
 	//std::cout << Devices.size();

@@ -59,7 +59,7 @@ protected:
 	char Command[2048] = { NULL };
 	bool enable;
 public:
-	Keithley(int port) : device(OpenPort(port)), enable(false) {
+	Keithley(int port, std::string name) : device(OpenPort(port)), port_name(name), enable(false) {
 		//device = OpenPort(port);
 		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);   //Получение хендла
 		CONSOLE_CURSOR_INFO cursor = { 1, false };   // Число от 1 до 100 размер курсора в процентах
@@ -157,11 +157,11 @@ public:
 	bool ClosePort();
 };
 
-void StartConfig(Keithley& device, std::string Source, float SourceValue, float ProtValue);
+void StartConfig(Keithley device, std::string Source, float SourceValue, float ProtValue);
 
-void StartMeas(Keithley& obj, int cycle);
+void StartMeas(Keithley obj, int cycle);
 
-void Stop(Keithley& obj);
+void Stop(Keithley obj);
 
 void setcur(int x, int y);
 
