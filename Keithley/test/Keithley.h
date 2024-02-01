@@ -8,7 +8,7 @@
 #include <cstring>
 #include <iomanip>
 #include <sstream>
-#include <variant>
+#include <vector>
 
 // Базовы значения порта
 #define BAUD_RATE_9600 CBR_9600;
@@ -26,12 +26,6 @@
 #endif
 
 typedef HANDLE PORT;
-
-void setcur(int x, int y);
-
-void Begin();
-
-void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);
 
 template <typename T>
 T getInput(const std::string& hint, bool positive_only = false) {
@@ -58,20 +52,32 @@ T getInput(const std::string& hint, bool positive_only = false) {
 
 class Keithley {
 protected:
+	TCHAR comname[100];
+	std::string port_name;
 	PORT device;
 	char ReadBuffer[2048] = { NULL };
 	char Command[2048] = { NULL };
+	bool enable;
 public:
-	Keithley(int port) : device(OpenPort(port)) {
+	Keithley(int port) : device(OpenPort(port)), enable(false) {
 		//device = OpenPort(port);
 		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);   //Получение хендла
 		CONSOLE_CURSOR_INFO cursor = { 1, false };   // Число от 1 до 100 размер курсора в процентах
 		// false\true - видимость
 		SetConsoleCursorInfo(hCons, &cursor);  //Применение заданных параметров курсора
 	}
-	~Keithley() {
+
+	~Keithley() {		
 		//delete[] ReadBuffer;
 		ClosePort();
+	}
+
+	void SetEnable(bool value) {
+		enable = value;
+	}
+
+	bool GetEnable() {
+		return enable;
 	}
 
 	PORT GetPort() {
@@ -143,11 +149,22 @@ public:
 
 	char* ReadCurr();
 
-	std::string ReadVoltCurr(int num);
+	void SetMeas();
 
-	// Вывод на консоль значений Vcc & Icc
-	void PrintRead();
+	std::string ReadVoltCurr(int num);
 
 	// Закрыть порт
 	bool ClosePort();
 };
+
+void StartConfig(Keithley& device, std::string Source, float SourceValue, float ProtValue);
+
+void StartMeas(Keithley& obj, int cycle);
+
+void Stop(Keithley& obj);
+
+void setcur(int x, int y);
+
+void Begin();
+
+void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);

@@ -3,19 +3,19 @@
 // Открыть порт
 PORT Keithley::OpenPort(int portName) {
 	PORT port{};
-	TCHAR comname[100];
 	wsprintf(comname, TEXT("\\\\.\\COM%d"), portName);
+	//std::wstring wide_port_name(comname);
+	//port_name.resize(wide_port_name.size());
+	//std::copy(wide_port_name.begin(), wide_port_name.end(), port_name.begin());
+	port_name = "COM - Port #" + portName + '\n';
 
 	// Открытие COM-порта
 	return CreateFile(comname, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-	if (port == INVALID_HANDLE_VALUE)
-	{
-		std::cout << "Ошибка открытия COM-порта" << std::endl;
-	}
-	else {
-		return port;
-	}
 }
+
+
+
+
 
 // Команда записи
 bool Keithley::WriteToPort(const char* command) {
@@ -28,6 +28,10 @@ bool Keithley::ReadFromPort() {
 	DWORD bytesRead;
 	return ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
 }
+
+
+
+
 
 // Настроить порт
 bool Keithley::ConfigPort() {
@@ -111,6 +115,10 @@ bool Keithley::SetParity(int Parity) {
 	return true;
 }
 
+
+
+
+
 // Сбросить время
 bool Keithley::ResetTime() {
 	return WriteToPort("SYST:TIME:RES\n");
@@ -146,6 +154,10 @@ bool Keithley::SetReadSpeed(float value) {
 	return WriteToPort(command.c_str());
 }
 
+
+
+
+
 // ИСТОЧНИК НАПРЯЖЕНИЯ
 //
 //  Установить значение напряжения
@@ -169,6 +181,9 @@ bool Keithley::SetCurrProt(float value) {
 	std::replace(command.begin(), command.end(), ',', '.');
 	return WriteToPort(command.c_str());
 }
+
+
+
 
 
 // ИСТОЧНИК ТОКА
@@ -195,6 +210,10 @@ bool Keithley::SetVoltProt(float value) {
 	return WriteToPort(command.c_str());
 }
 
+
+
+
+
 // Команды отображения на приборе
 char* Keithley::DisplayVolts() {
 	WriteToPort(":MEAS:VOLT?\n");
@@ -207,6 +226,10 @@ char* Keithley::DisplayCurr() {
 	//ReadFromPort();
 	return ReadBuffer;
 }
+
+
+
+
 
 // Команда чтения
 char* Keithley::ReadVolt() {
@@ -229,61 +252,101 @@ char* Keithley::ReadCurr() {
 	return ReadBuffer;
 }
 
-std::string Keithley::ReadVoltCurr(int num) {
+void Keithley::SetMeas() {
+	WriteToPort(":FORM:ELEM VOLT, CURR, TIME\n");
+	WriteToPort(":SENSE:FUNC 'VOLT', 'CURR'\n");
+	WriteToPort(":READ?\n");
+	Sleep(100);
+}
+
+std::string Keithley::ReadVoltCurr(int cycle) {
 	std::string info;
 	std::string svcc;
 	std::string sicc;
 	std::string stime;
 	float time;
 	float vcc;
-	WriteToPort(":FORM:ELEM VOLT, CURR, TIME\n");
-	WriteToPort(":SENSE:FUNC 'VOLT', 'CURR'\n");
+	setcur(0, 0);
+	system("cls");
+	std::cout << "Measurment #" << cycle << ": " << std::endl;
 	WriteToPort(":READ?\n");
-	Sleep(100);
-	for (int i = 1; i <= num; i++) {
-		setcur(0, 0);
-		system("cls");
-		std::cout << "Measurment #" << i << ": " << std::endl;
-		WriteToPort(":READ?\n");
-		ReadFromPort();
-		info = ReadBuffer;
-		svcc = info.substr(0, 13);
-		sicc = info.substr(15, 13);
-		stime = info.substr(29, 13);
+	ReadFromPort();
+	info = ReadBuffer;
+	svcc = info.substr(0, 13);
+	sicc = info.substr(14, 13);
+	stime = info.substr(29, 13);
 
-		std::istringstream iss_time(stime);
-		iss_time >> time;
-		std::istringstream iss_vcc(svcc);
-		iss_vcc >> vcc;
-
-		std::cout << "TIME: " << std::fixed << std::setprecision(3) << time << " Seconds" << std::endl;
-		std::cout << "Vcc = " << std::fixed << std::setprecision(4) << vcc << " Volts" << std::endl;
-		std::cout << "Icc = " << sicc << " Ampers" << std::endl;
-		//std::cout << info << std::endl;
-		memset(ReadBuffer, 0, sizeof(ReadBuffer));
-		Sleep(5);
-	}
+	std::istringstream iss_time(stime);
+	iss_time >> time;
+	std::istringstream iss_vcc(svcc);
+	iss_vcc >> vcc;
+	std::stringstream iss_info;
+	iss_info << "TIME: "
+				<< std::fixed
+				<< std::setprecision(3)
+				<< time << " Seconds\n"
+				<< "Vcc = "
+				<< std::fixed
+				<< std::setprecision(4)
+				<< vcc
+				<< " Volts\n"
+				<< "Icc = "
+				<< sicc
+				<< " Ampers\n";
+	info = iss_info.str();
+	//std::cout << iss_info.str() << std::endl;
+	memset(ReadBuffer, 0, sizeof(ReadBuffer));
+	Sleep(5);
 	return info;
 }
 
-// Вывод на консоль значений Vcc & Icc
-void Keithley::PrintRead() {
-	std::cout << "VCC = ";
-	for (int i = 0; i < 13; i++) {
-		std::cout << ReadBuffer[i];
-	}
-	std::cout << " ||| ";
-	std::cout << "ICC = ";
-	for (int i = 15; i < 27; i++) {
-		std::cout << ReadBuffer[i];
-	}
-	std::cout << std::endl;
-}
+
+
+
 
 // Закрыть порт
 bool Keithley::ClosePort() {
 	return CloseHandle(device);
 }
+
+
+
+
+
+void StartConfig(Keithley& device, std::string Source, float SourceValue, float ProtValue) {
+	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
+	if (device.GetPort() == INVALID_HANDLE_VALUE) {
+		device.SetEnable(false);
+		device.ClosePort();
+		std::cout << "Can't open COMport\n";
+		return;
+	}
+	else {
+		device.ConfigPort();
+		device.SetFunc(Source);
+		if (Source == VOLT) {
+			device.SetVolt(SourceValue);
+			device.SetCurrProt(ProtValue);
+		}
+		else if (Source == CURR) {
+			device.SetCurr(SourceValue);
+			device.SetVoltProt(ProtValue);
+		}
+		else {
+			std::cout << "INCORRECT SOURCE TYPE\n";
+			device.SetEnable(false);
+			device.ClosePort();
+			return;
+		}
+		device.SetEnable(true);
+		device.SetReadSpeed(0.01);
+		device.ResetTime();
+	}
+	return;
+}
+
+
+
 
 void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles) {
 	Keithley device(numPort);
@@ -312,7 +375,10 @@ void Init(int numPort, std::string Source, float SourceValue, float ProtValue, i
 	device.OutputOn();
 	Sleep(300);
 
-	device.ReadVoltCurr(Cycles);
+	device.SetMeas();
+	for (int i = 1; i <= Cycles; i++) {
+		std::cout << device.ReadVoltCurr(i) << std::endl;
+	}
 	Sleep(5);
 
 	device.OutputOff();
@@ -320,13 +386,91 @@ void Init(int numPort, std::string Source, float SourceValue, float ProtValue, i
 	device.ClosePort();
 }
 
+
+
+
+
+void StartMeas(Keithley& obj, int cycle) {
+	std::cout << obj.ReadVoltCurr(cycle) << std::endl;
+}
+
+void Stop(Keithley& obj) {
+	obj.OutputOff();
+	obj.ClosePort();
+}
+
 void Begin() {
-	int port = getInput<int>("Номер COM - порта (0..20)", true);
-	std::string source = getInput<std::string>("Тип источника (Volt, Curr)");
-	float source_value = getInput<float>("Значение источника (В, мА)");
-	float prot_value = getInput<float>("Ограничение (В, мА)");
-	int cycles = getInput<int>("Кол - во замеров", true);
-	Init(port, source, source_value, prot_value, cycles);
+	std::vector<Keithley> Devices;
+	int port, cycles;
+	std::string source;
+	float source_value, prot_value;
+
+	int quantity_devices = getInput<int>("Кол - во приборов", true);
+
+	for (int i = 0; i < quantity_devices; i++) {
+		port = getInput<int>("Номер COM - порта (0..20)", true); 
+		Keithley device(port);
+		source = getInput<std::string>("Тип источника (Volt, Curr)");
+		source_value = getInput<float>("Значение источника (В, мА)");
+		prot_value = getInput<float>("Ограничение (В, мА)");
+		StartConfig(device, source, source_value, prot_value);
+		if (device.GetEnable()) Devices.push_back(device);
+		//StartConfig(device, source, source_value, prot_value);
+	}
+
+
+
+	cycles = getInput<int>("Кол - во замеров", true);
+	//std::cout << Devices.size();
+
+	/*Devices[0].SetMeas();
+	Devices[0].OutputOn();
+	Sleep(100);
+	for (int i = 1; i <= 10; i++) {
+		Devices[0].ReadVoltCurr(1);
+	}
+	Sleep(10);
+	Devices[0].OutputOff();
+	Devices[0].ClosePort();*/
+
+	/*Init(port, source, source_value, prot_value, cycles);
+	//device.OutputOn();
+	Sleep(300);
+
+	for (int i = 1; i <= cycles; i++) {
+		std::cout << device.ReadVoltCurr(5) << std::endl;
+	}
+	Sleep(10);
+	device.OutputOff();
+	device.ClosePort();*/
+
+
+	if (!Devices.empty()) {
+		for (int i = 1; i <= cycles; i++) {
+			for (auto& obj : Devices) {
+				obj.OutputOn();
+			}
+
+			Sleep(1000);
+
+			for (auto& obj : Devices) {
+				obj.OutputOff();
+			}
+		}
+
+		/*for (int i = 1; i <= cycles; i++) {
+			for (auto& obj : Devices) {
+				if (obj.GetEnable()) StartMeas(obj, i);
+			}
+		}
+
+		for (auto& obj : Devices) {
+			if (obj.GetEnable()) Stop(obj);
+		}*/
+	}
+	else {
+		std::cout << "Список устройств пуст!\n";
+	}
 }
 
 void setcur(int x, int y)//установка курсора на позицию  x y
