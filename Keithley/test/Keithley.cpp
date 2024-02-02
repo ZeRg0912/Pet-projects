@@ -253,6 +253,7 @@ char* Keithley::ReadCurr() {
 }
 
 void Keithley::SetMeas() {
+	this->ResetTime();
 	WriteToPort(":FORM:ELEM VOLT, CURR, TIME\n");
 	WriteToPort(":SENSE:FUNC 'VOLT', 'CURR'\n");
 	WriteToPort(":READ?\n");
@@ -314,43 +315,43 @@ bool Keithley::ClosePort() {
 
 
 
-void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles) {
-	Keithley device(numPort);
-	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
-	/*if (!device.OpenPort(numPort)) {
-		std::cout << "Can't open COMport\n";
-		return;
-	}*/
-	device.ConfigPort();
-	device.SetFunc(Source);
-	if (Source == VOLT) {
-		device.SetVolt(SourceValue);
-		device.SetCurrProt(ProtValue);
-	}
-	else if (Source == CURR) {
-		device.SetCurr(SourceValue);
-		device.SetVoltProt(ProtValue);
-	}
-	else {
-		std::cout << "INCORRECT SOURCE TYPE\n";
-		device.ClosePort();
-		return;
-	}
-	device.SetReadSpeed(0.01);
-	device.ResetTime();
-	device.OutputOn();
-	Sleep(300);
-
-	device.SetMeas();
-	for (int i = 1; i <= Cycles; i++) {
-		std::cout << device.ReadVoltCurr(i) << std::endl;
-	}
-	Sleep(5);
-
-	device.OutputOff();
-
-	device.ClosePort();
-}
+//void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles) {
+//	Keithley device(numPort);
+//	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
+//	/*if (!device.OpenPort(numPort)) {
+//		std::cout << "Can't open COMport\n";
+//		return;
+//	}*/
+//	device.ConfigPort();
+//	device.SetFunc(Source);
+//	if (Source == VOLT) {
+//		device.SetVolt(SourceValue);
+//		device.SetCurrProt(ProtValue);
+//	}
+//	else if (Source == CURR) {
+//		device.SetCurr(SourceValue);
+//		device.SetVoltProt(ProtValue);
+//	}
+//	else {
+//		std::cout << "INCORRECT SOURCE TYPE\n";
+//		device.ClosePort();
+//		return;
+//	}
+//	device.SetReadSpeed(0.01);
+//	device.ResetTime();
+//	device.OutputOn();
+//	Sleep(300);
+//
+//	device.SetMeas();
+//	for (int i = 1; i <= Cycles; i++) {
+//		std::cout << device.ReadVoltCurr(i) << std::endl;
+//	}
+//	Sleep(5);
+//
+//	device.OutputOff();
+//
+//	device.ClosePort();
+//}
 
 
 
@@ -384,7 +385,6 @@ void Config(Keithley* device, std::string Source, float SourceValue, float ProtV
 		}
 		device->SetEnable(true);
 		device->SetReadSpeed(0.01);
-		device->ResetTime();
 	}
 	return;
 }
@@ -414,12 +414,12 @@ void Begin() {
 
 	for (int i = 0; i < quantity_devices; i++) {
 		port = getInput<int>("Номер COM - порта (0..20)", true);
-		source = getInput<std::string>("Тип источника (Volt, Curr)");
+		source = getInput<std::string>("Тип источника (Volt, Curr)",false ,{"VOLT", "CURR"});
 		source_value = getInput<float>("Значение источника (В, мА)");
 		prot_value = getInput<float>("Ограничение (В, мА)");
-		Keithley* dev = new Keithley(port);
-		Config(dev, source, source_value, prot_value);
-		Devices.push_back(dev);
+		Keithley* device = new Keithley(port);
+		Config(device, source, source_value, prot_value);
+		Devices.push_back(device);
 	}
 	Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
 	//Devices.shrink_to_fit();

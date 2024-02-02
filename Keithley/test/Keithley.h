@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <sstream>
 #include <vector>
+#include <set>
 
 // Базовы значения порта
 #define BAUD_RATE_9600 CBR_9600;
@@ -27,25 +28,56 @@
 
 typedef HANDLE PORT;
 
+//template <typename T>
+//T getInput(const std::string& hint, bool positive_only = false) {
+//	T input;
+//	while (true) {
+//	system("cls");
+//		std::cout << "Введите " << hint << ": ";
+//		if (std::cin >> input && (!positive_only || (positive_only && !(std::less<T>()(input, 0))))) {
+//			break;
+//		}
+//		else {
+//			std::cin.clear();
+//			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+//			if (positive_only) {
+//				std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
+//			}
+//			else {
+//				std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
+//			}
+//		}
+//	}
+//	return input;
+//}
+
 template <typename T>
-T getInput(const std::string& hint, bool positive_only = false) {
+T getInput(const std::string& hint, bool positive_only = false, const std::set<T>& commands = {}) {
 	T input;
-	system("cls");
 	while (true) {
 		std::cout << "Введите " << hint << ": ";
-		if (std::cin >> input && (!positive_only || (positive_only && !(std::less<T>()(input, 0))))) {
-			break;
-		}
-		else {
+		std::cin >> input;
+		system("cls");
+		if (std::cin.fail()) {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			if (positive_only) {
-				std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
+			std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
+			continue;
+		}
+		if (positive_only && input < 0) {
+			std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
+			continue;
+		}
+		if constexpr (!commands.empty() && std::is_same_v<T, std::string>) {
+			for (int i = 0; i < input.size(); i++) {
+				input[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(input[i])));
 			}
-			else {
-				std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
+			if (input != commands) {
+				std::cout << "Ошибка ввода, пожалуйста введите корректный тип источника!\n";
+				continue;
 			}
 		}
+		break;
 	}
 	return input;
 }
@@ -165,16 +197,14 @@ public:
 	bool ClosePort();
 };
 
+//void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);
+
 void Config(Keithley* device, std::string Source, float SourceValue, float ProtValue);
 
 void StartMeas(Keithley* obj, int cycle);
 
 void Stop(Keithley* obj);
 
-void setcur(int x, int y);
-
 void Begin();
 
-void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);
-
-Keithley StartConfig(int numPort, std::string Source, float SourceValue, float ProtValue);
+void setcur(int x, int y);
