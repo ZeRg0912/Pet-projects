@@ -53,18 +53,18 @@ T getInput(const std::string& hint, bool positive_only = false) {
 class Keithley {
 protected:
 	TCHAR comname[100];
-	std::string port_name;
+	std::string PortName;
 	PORT device;
 	char ReadBuffer[2048] = { NULL };
-	char Command[2048] = { NULL };
+	//char Command[2048] = { NULL };
 	bool enable;
 public:
-	Keithley(int port, std::string name) : device(OpenPort(port)), port_name(name), enable(false) {
+	Keithley(int port) : device(OpenPort(port)), enable(false) {
 		//device = OpenPort(port);
-		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);   //Получение хендла
-		CONSOLE_CURSOR_INFO cursor = { 1, false };   // Число от 1 до 100 размер курсора в процентах
+		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);		//Получение хендла
+		CONSOLE_CURSOR_INFO cursor = { 1, false };			// Число от 1 до 100 размер курсора в процентах
 		// false\true - видимость
-		SetConsoleCursorInfo(hCons, &cursor);  //Применение заданных параметров курсора
+		SetConsoleCursorInfo(hCons, &cursor);				//Применение заданных параметров курсора
 	}
 
 	~Keithley() {		
@@ -76,12 +76,20 @@ public:
 		enable = value;
 	}
 
+	void SetName(std::string NewName) {
+		PortName = NewName;
+	}
+
 	bool GetEnable() {
 		return enable;
 	}
 
 	PORT GetPort() {
 		return device;
+	}
+
+	std::string GetNameDevice() {
+		return PortName;
 	}
 
 	// Открыть порт
@@ -102,7 +110,7 @@ public:
 	bool ResetTime();
 
 	// Команда записи
-	bool WriteToPort(const char* data);
+	bool WriteToPort(std::string data);
 	
 	// Команда чтения
 	bool ReadFromPort();
@@ -157,14 +165,16 @@ public:
 	bool ClosePort();
 };
 
-void StartConfig(Keithley device, std::string Source, float SourceValue, float ProtValue);
+void Config(Keithley* device, std::string Source, float SourceValue, float ProtValue);
 
-void StartMeas(Keithley obj, int cycle);
+void StartMeas(Keithley* obj, int cycle);
 
-void Stop(Keithley obj);
+void Stop(Keithley* obj);
 
 void setcur(int x, int y);
 
 void Begin();
 
 void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);
+
+Keithley StartConfig(int numPort, std::string Source, float SourceValue, float ProtValue);
