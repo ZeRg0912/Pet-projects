@@ -414,7 +414,7 @@ void Begin() {
 
 	for (int i = 0; i < quantity_devices; i++) {
 		port = getInput<int>("Номер COM - порта (0..20)", true);
-		source = getInput<std::string>("Тип источника (Volt, Curr)",false ,{"VOLT", "CURR"});
+		source = getInput<std::string>("Тип источника (Volt, Curr)",false);
 		source_value = getInput<float>("Значение источника (В, мА)");
 		prot_value = getInput<float>("Ограничение (В, мА)");
 		Keithley* device = new Keithley(port);

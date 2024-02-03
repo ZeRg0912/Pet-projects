@@ -28,56 +28,48 @@
 
 typedef HANDLE PORT;
 
-//template <typename T>
-//T getInput(const std::string& hint, bool positive_only = false) {
-//	T input;
-//	while (true) {
-//	system("cls");
-//		std::cout << "Введите " << hint << ": ";
-//		if (std::cin >> input && (!positive_only || (positive_only && !(std::less<T>()(input, 0))))) {
-//			break;
-//		}
-//		else {
-//			std::cin.clear();
-//			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-//			if (positive_only) {
-//				std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
-//			}
-//			else {
-//				std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
-//			}
-//		}
-//	}
-//	return input;
-//}
-
 template <typename T>
-T getInput(const std::string& hint, bool positive_only = false, const std::set<T>& commands = {}) {
+T getInput(const std::string& hint, bool positive_only = false) {
 	T input;
 	while (true) {
-		std::cout << "Введите " << hint << ": ";
-		std::cin >> input;
 		system("cls");
-		if (std::cin.fail()) {
+		std::cout << "Введите " << hint << ": ";
+		if (std::cin >> input && (!positive_only || (positive_only && !(std::less<T>()(input, 0))))) {
+			break;
+		}
+		else {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
-			continue;
-		}
-		if (positive_only && input < 0) {
-			std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
-			continue;
-		}
-		if constexpr (!commands.empty() && std::is_same_v<T, std::string>) {
-			for (int i = 0; i < input.size(); i++) {
-				input[i] = static_cast<char>(std::toupper(static_cast<unsigned char>(input[i])));
+			if (positive_only) {
+				std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
 			}
-			if (input != commands) {
-				std::cout << "Ошибка ввода, пожалуйста введите корректный тип источника!\n";
-				continue;
+			else {
+				std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
 			}
 		}
-		break;
+	}
+	return input;
+}
+
+template<>
+std::string getInput(const std::string& hint, bool positive_only = false) {
+	std::string input;
+	while (true) {
+		system("cls");
+		std::cout << "Введите " << hint << ": ";
+		if (std::cin >> input && !positive_only) {
+			break;
+		}
+		else {
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			if (positive_only) {
+				std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
+			}
+			else {
+				std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
+			}
+		}
 	}
 	return input;
 }
