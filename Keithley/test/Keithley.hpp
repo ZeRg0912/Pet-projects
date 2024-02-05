@@ -10,6 +10,8 @@
 #include <sstream>
 #include <vector>
 #include <set>
+#include <fstream>
+#include <conio.h>
 
 // Базовы значения порта
 #define BAUD_RATE_9600 CBR_9600;
@@ -53,16 +55,26 @@ T getInput(const std::string& hint, bool positive_only = false) {
 }
 
 template<>
-std::string getInput(const std::string& hint, bool positive_only) {
+std::string getInput(const std::string& hint, bool valid_command) {
 	std::string input;
 	std::vector<std::string> ValidCommands = { "VOLT", "CURR" };
 	while (true) {
 		std::cout << "Введите " << hint << ": ";
 		std::cin >> input;
 		system("cls");
-		std::transform(input.begin(), input.end(), input.begin(), ::toupper);
-		auto it = std::find(ValidCommands.begin(), ValidCommands.end(), input);
-		if (it != ValidCommands.end()) {
+		if (valid_command) {
+			std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+			auto it = std::find(ValidCommands.begin(), ValidCommands.end(), input);
+			if (it != ValidCommands.end()) {
+				break;
+			}
+			else {
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				std::cout << "Ошибка ввода, пожалуйста введите правильную комманду!\n";
+			}
+		}
+		else if (!valid_command) {
 			break;
 		}
 		else {
@@ -387,23 +399,27 @@ public:
 		std::string stime;
 		float time;
 		float vcc;
-		system("cls");
+		//system("cls");
 		setcur(0, 0);
-		std::cout << GetNameDevice();
-		std::cout << "Measurment #" << cycle << ": " << std::endl;
 		WriteToPort(":READ?\n");
 		ReadFromPort();
 		info = ReadBuffer;
 		svcc = info.substr(0, 13);
 		sicc = info.substr(14, 13);
-		stime = info.substr(29, 13);
+		stime = info.substr(28, 13);
 
 		std::istringstream iss_time(stime);
 		iss_time >> time;
 		std::istringstream iss_vcc(svcc);
 		iss_vcc >> vcc;
 		std::stringstream iss_info;
-		iss_info << "TIME: "
+		//info var 1
+		/*iss_info 
+			<< GetNameDevice()
+			<< "Measurment #"
+			<< cycle
+			<< ": \n"
+			<< "TIME: "
 			<< std::fixed
 			<< std::setprecision(3)
 			<< time << " Seconds\n"
@@ -414,11 +430,33 @@ public:
 			<< " Volts\n"
 			<< "Icc = "
 			<< sicc
-			<< " Ampers\n";
+			<< " Ampers\n"
+			<< std::string(30, '=') 
+			<< std::endl;*/
+		//info var 2
+		iss_info
+			<< GetNameDevice()
+			<< "Measurment #"
+			<< cycle
+			<< ": \n"
+			<< "TIME: "
+			<< std::fixed
+			<< std::setprecision(3)
+			<< time << " s || "
+			<< "Vcc = "
+			<< std::fixed
+			<< std::setprecision(4)
+			<< vcc
+			<< " V || "
+			<< "Icc = "
+			<< sicc
+			<< " A\n"
+			<< std::string(70, '=')
+			<< std::endl;
 		info = iss_info.str();
 		//std::cout << iss_info.str() << std::endl;
 		memset(ReadBuffer, 0, sizeof(ReadBuffer));
-		Sleep(5);
+		Sleep(50);
 		return info;
 	}
 
@@ -462,10 +500,6 @@ void Config(Keithley* device, std::string Source, float SourceValue, float ProtV
 	return;
 }
 
-void StartMeas(Keithley* obj, int cycle) {
-	std::cout << obj->ReadVoltCurr(cycle);
-}
-
 void Stop(Keithley* obj) {
 	obj->OutputOff();
 	obj->ClosePort();
@@ -476,6 +510,9 @@ void Begin() {
 	int port, cycles;
 	std::string source;
 	float source_value, prot_value;
+	std::string file_to_save;
+	std::string text;
+	bool infinity = false;
 
 	auto RemoveCondition = [](Keithley* obj) {return !obj->GetEnable(); };
 
@@ -483,7 +520,7 @@ void Begin() {
 
 	for (int i = 0; i < quantity_devices; i++) {
 		port = getInput<int>("Номер COM - порта (0..20)", true);
-		source = getInput<std::string>("Тип источника (Volt, Curr)", false);
+		source = getInput<std::string>("Тип источника (Volt, Curr)", true);
 		source_value = getInput<float>("Значение источника (В, мА)");
 		prot_value = getInput<float>("Ограничение (В, мА)");
 		Keithley* device = new Keithley(port);
@@ -492,8 +529,32 @@ void Begin() {
 	}
 	Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
 	//Devices.shrink_to_fit();
+	do {
+		std::cout << "Выберите: конечное число измерений (num) или inf: ";
+		std::string select_meas;
+		std::cin >> select_meas;
+		std::transform(select_meas.begin(), select_meas.end(), select_meas.begin(), ::toupper);
+		if (select_meas == "NUM") {
+			cycles = getInput<int>("Кол - во измерений", true);
+			infinity = false;
+			break;
+		}
+		else if (select_meas == "INF") {
+			cycles = INFINITY;
+			infinity = true;
+			break;
+		}		
+		else {
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cout << "Вы ввели некорректное значение!\n";
 
-	cycles = getInput<int>("Кол - во измерений: ", true);
+		}
+	} while (true);
+	system("cls");
+	
+	file_to_save = getInput<std::string>("Файл для сохранения", false);
+	file_to_save += ".txt";
 
 	for (auto& obj : Devices) {
 		obj->OutputOn();
@@ -506,12 +567,57 @@ void Begin() {
 	}
 
 	if (!Devices.empty()) {
-		for (int i = 1; i <= cycles; i++) {
-			for (auto& obj : Devices) {
-				StartMeas(obj, i);
-				std::cout << std::string(30, '=') << std::endl;
+		std::ofstream OutFile(file_to_save, std::ios_base::app);
+		int first = 0;
+		if (OutFile.is_open()) {
+			bool exit = false;
+			// infinity mode
+			if (infinity) {
+				int i = 1;
+				while (!exit) {
+					if (_kbhit()) {
+						switch (_getch()) {
+						case 'x':
+							exit = true;
+							break;
+						}
+					}
+					for (auto& obj : Devices) {
+						text = obj->ReadVoltCurr(i);
+						std::cout << text;
+						OutFile << text;
+						i++;
+					}
+				}
 			}
+			// cycles mode
+			else {
+				for (int i = 1; i <= cycles; i++) {
+					if (!exit) {
+						if (_kbhit()) {
+							switch (_getch()) {
+							case 'x':
+								exit = true;
+								break;
+							}
+						}
+						for (auto& obj : Devices) {
+							text = obj->ReadVoltCurr(i);
+							std::cout << text;
+							OutFile << text;
+						}
+					}
+					else {
+						break;
+					}
+				}
+			}			
+			OutFile.close();
 		}
+		else {
+			std::cerr << "Невозможно открыть/создать файл для записи!\n";
+		}
+		
 		Sleep(10);
 		for (auto& obj : Devices) {
 			Stop(obj);
