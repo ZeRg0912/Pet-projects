@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Keithley.h"
+#include "Keithley.hpp"
 
 int main() {
     setlocale(LC_ALL, "RUSSIAN");
