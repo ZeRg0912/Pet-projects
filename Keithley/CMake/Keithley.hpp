@@ -667,5 +667,4 @@ void Begin() {
 		}
 	}
 	Devices.clear();
-	system("pause");
 }
