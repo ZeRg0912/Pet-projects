@@ -24,6 +24,8 @@
 #define CURR "CURR"
 #define RES "RES"
 
+#define DELAY 1000
+
 #if defined(max)
 #undef max
 #endif
@@ -117,7 +119,7 @@ public:
 	}
 
 	void SetEnable(bool value) {
-		enable = value;
+		this->enable = value;
 	}
 
 	void SetName(std::string NewName) {
@@ -163,6 +165,20 @@ public:
 	bool ReadFromPort() {
 		DWORD bytesRead;
 		return ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+	}
+
+
+
+
+
+	// Проверка устройства
+	bool IsReady() {
+		DWORD bytesRead;
+		char buffer[256];
+		strcpy_s(buffer, "*IDN?\n");
+		if (!WriteFile(device, buffer, strlen(buffer), &bytesRead, NULL)) return false;
+		if (!ReadFile(device, buffer, sizeof(buffer), &bytesRead, NULL)) return false;
+		return true;
 	}
 
 
@@ -284,7 +300,7 @@ public:
 	}
 
 	// Установка скорости чтения
-	bool SetReadSpeed(float value) {
+	bool SetReadSpeed(double value) {
 		std::string command = ":SENS:VOLT:NPLC " + std::to_string(value) + "\n";
 		std::replace(command.begin(), command.end(), ',', '.');
 		return WriteToPort(command.c_str());
@@ -392,7 +408,7 @@ public:
 		Sleep(100);
 	}
 
-	std::string ReadVoltCurr(int cycle) {
+	std::string ReadVoltCurr(long long cycle) {
 		std::string info;
 		std::string svcc;
 		std::string sicc;
@@ -456,7 +472,7 @@ public:
 		info = iss_info.str();
 		//std::cout << iss_info.str() << std::endl;
 		memset(ReadBuffer, 0, sizeof(ReadBuffer));
-		Sleep(50);
+		//leep(50);
 		return info;
 	}
 
@@ -472,21 +488,31 @@ void Config(Keithley* device, std::string Source, float SourceValue, float ProtV
 	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
 	if (device->GetPort() == INVALID_HANDLE_VALUE) {
 		device->SetEnable(false);
-		device->ClosePort();
 		device->SetName("Порт НЕДОСТУПЕН!");
+		device->ClosePort();
 		//std::cout << "Can't open COMport\n";
 		return;
+	}
+	else if (device->IsReady()) {
+		device->SetEnable(false);
+		device->ClosePort();
 	}
 	else {
 		device->ConfigPort();
 		device->SetFunc(Source);
 		if (Source == VOLT) {
-			device->SetVolt(SourceValue);
-			device->SetCurrProt(ProtValue);
+			if (device->SetVolt(SourceValue)) device->SetCurrProt(ProtValue);
+			else {
+				device->SetEnable(false);
+				device->ClosePort();
+			}
 		}
 		else if (Source == CURR) {
-			device->SetCurr(SourceValue);
-			device->SetVoltProt(ProtValue);
+			if (device->SetCurr(SourceValue)) device->SetVoltProt(ProtValue);
+			else {
+				device->SetEnable(false);
+				device->ClosePort();
+			}
 		}
 		else {
 			std::cout << "INCORRECT SOURCE TYPE\n";
@@ -507,14 +533,15 @@ void Stop(Keithley* obj) {
 
 void Begin() {
 	std::vector<Keithley*> Devices;
-	int port, cycles;
+	int port;
+	long long cycles;
 	std::string source;
 	float source_value, prot_value;
 	std::string file_to_save;
 	std::string text;
 	bool infinity = false;
 
-	auto RemoveCondition = [](Keithley* obj) {return !obj->GetEnable(); };
+	auto RemoveCondition = [](Keithley* obj) {return !(obj->GetEnable()); };
 
 	int quantity_devices = getInput<int>("Кол - во приборов", true);
 
@@ -527,20 +554,23 @@ void Begin() {
 		Config(device, source, source_value, prot_value);
 		Devices.push_back(device);
 	}
+
 	Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
-	//Devices.shrink_to_fit();
+	Devices.shrink_to_fit();
+
+	//Select Cycles
 	do {
 		std::cout << "Выберите: конечное число измерений (num) или inf: ";
 		std::string select_meas;
 		std::cin >> select_meas;
 		std::transform(select_meas.begin(), select_meas.end(), select_meas.begin(), ::toupper);
 		if (select_meas == "NUM") {
-			cycles = getInput<int>("Кол - во измерений", true);
+			cycles = getInput<long long>("Кол - во измерений", true);
 			infinity = false;
 			break;
 		}
 		else if (select_meas == "INF") {
-			cycles = INFINITY;
+			//cycles = INFINITY;
 			infinity = true;
 			break;
 		}		
@@ -556,19 +586,23 @@ void Begin() {
 	file_to_save = getInput<std::string>("Файл для сохранения", false);
 	file_to_save += ".txt";
 
-	for (auto& obj : Devices) {
-		obj->OutputOn();
-	}
-
-	Sleep(300);
-
-	for (auto& obj : Devices) {
-		obj->SetMeas();
-	}
-
-	if (!Devices.empty()) {
+	if (Devices.empty()) {
+		std::cout << "Нет доступных устройств!\n";
+	} 
+	else {
 		std::ofstream OutFile(file_to_save, std::ios_base::app);
 		int first = 0;
+
+		for (auto& obj : Devices) {
+			obj->OutputOn();
+		}
+
+		Sleep(300);
+
+		for (auto& obj : Devices) {
+			obj->SetMeas();
+		}
+
 		if (OutFile.is_open()) {
 			bool exit = false;
 			// infinity mode
@@ -587,12 +621,13 @@ void Begin() {
 						std::cout << text;
 						OutFile << text;
 						i++;
+						Sleep(DELAY);
 					}
 				}
 			}
 			// cycles mode
 			else {
-				for (int i = 1; i <= cycles; i++) {
+				for (long long i = 1; i <= cycles; i++) {
 					if (!exit) {
 						if (_kbhit()) {
 							switch (_getch()) {
@@ -605,6 +640,7 @@ void Begin() {
 							text = obj->ReadVoltCurr(i);
 							std::cout << text;
 							OutFile << text;
+							Sleep(DELAY);
 						}
 					}
 					else {
@@ -622,13 +658,13 @@ void Begin() {
 		for (auto& obj : Devices) {
 			Stop(obj);
 		}
-	}
-	else {
-		std::cout << "Нет доступных устройств!\n";
-	}
+	}	
 
-	for (Keithley* element : Devices) {
-		delete element;
+	//Clear vector of devices
+	if (!Devices.empty()) {
+		for (Keithley* element : Devices) {
+			delete element;
+		}
 	}
 	Devices.clear();
 }
