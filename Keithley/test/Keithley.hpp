@@ -171,16 +171,20 @@ public:
 
 
 
-	// Проверка устройства
-	bool IsReady() {
+	// Проверка вкл устройства
+	bool IsOn() {
+		std::string command = "*IDN?\n";
+		DWORD status;
+		WriteFile(device, command.c_str(), strlen(command.c_str()), &status, NULL);
+		Sleep(50);
+		char responce[256];
 		DWORD bytesRead;
-		char buffer[256];
-		strcpy_s(buffer, "*IDN?\n");
-		if (!WriteFile(device, buffer, strlen(buffer), &bytesRead, NULL)) return false;
-		if (!ReadFile(device, buffer, sizeof(buffer), &bytesRead, NULL)) return false;
-		return true;
+		ReadFile(device, responce, sizeof(responce), &bytesRead, NULL);
+		if (bytesRead > 0) {
+			return true;
+		}
+		return false;
 	}
-
 
 
 
@@ -291,14 +295,6 @@ public:
 		return WriteToPort(":OUTP OFF\n");
 	}
 
-	// Выбор режима
-	bool SetFunc(std::string data) {
-		std::string command = ":SOUR:FUNC " + data + "\n";
-		WriteToPort(command.c_str());
-		command = ":SOUR:" + std::string(data) + ":MODE FIXED\n";
-		return WriteToPort(command.c_str());
-	}
-
 	// Установка скорости чтения
 	bool SetReadSpeed(double value) {
 		std::string command = ":SENS:VOLT:NPLC " + std::to_string(value) + "\n";
@@ -308,7 +304,13 @@ public:
 
 
 
-
+	// Выбор режима
+	bool SetFunc(std::string data) {
+		std::string command = ":SOUR:FUNC " + data + "\n";
+		WriteToPort(command.c_str());
+		command = ":SOUR:" + std::string(data) + ":MODE FIXED\n";
+		return WriteToPort(command.c_str());
+	}
 
 	// ИСТОЧНИК НАПРЯЖЕНИЯ
 	//
@@ -325,7 +327,7 @@ public:
 		std::string command = ":SENS:CURR:RANG:AUTO ON\n";
 		WriteToPort(command.c_str());
 
-		command = ":SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
+		//command = ":SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
 		//std::cout << value / 100 << std::endl;
 		//WriteToPort(command.c_str());
 
@@ -342,7 +344,8 @@ public:
 	// 
 	// Установить значение тока
 	bool SetCurr(float value) {
-		std::string command = ":SOUR:CURR " + std::to_string(value / 1000) + "\n";
+		std::string command = ":SOUR:CURR:RANG " + std::to_string(value / 100) + "\n";
+		command = ":SOUR:CURR " + std::to_string(value / 1000) + "\n";
 		std::replace(command.begin(), command.end(), ',', '.');
 		return WriteToPort(command.c_str());
 	}
@@ -352,12 +355,7 @@ public:
 		std::string command = ":SENS:VOLT:RANG:AUTO ON\n";
 		WriteToPort(command.c_str());
 
-		//temp = "SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
-		//command = temp.c_str();
-		//std::cout << value / 100 << std::endl;
-		//WriteToPort(command);
-
-		command = ":SENS:VOLT:PROT " + std::to_string(value + 5) + "\n";
+		command = ":SENS:VOLT:PROT " + std::to_string(value) + "\n";
 		std::replace(command.begin(), command.end(), ',', '.');
 		return WriteToPort(command.c_str());
 	}
@@ -466,7 +464,7 @@ public:
 			<< " V || "
 			<< "Icc = "
 			<< sicc
-			<< " A\n"
+			<< " A  \n"
 			<< std::string(70, '=')
 			<< std::endl;
 		info = iss_info.str();
@@ -488,42 +486,44 @@ void Config(Keithley* device, std::string Source, float SourceValue, float ProtV
 	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
 	if (device->GetPort() == INVALID_HANDLE_VALUE) {
 		device->SetEnable(false);
-		device->SetName("Порт НЕДОСТУПЕН!");
+		device->SetName("ПОРТ НЕДОСТУПЕН!");
 		device->ClosePort();
 		//std::cout << "Can't open COMport\n";
 		return;
 	}
-	else if (device->IsReady()) {
-		device->SetEnable(false);
-		device->ClosePort();
-	}
 	else {
 		device->ConfigPort();
-		device->SetFunc(Source);
-		if (Source == VOLT) {
-			if (device->SetVolt(SourceValue)) device->SetCurrProt(ProtValue);
-			else {
-				device->SetEnable(false);
-				device->ClosePort();
-			}
-		}
-		else if (Source == CURR) {
-			if (device->SetCurr(SourceValue)) device->SetVoltProt(ProtValue);
-			else {
-				device->SetEnable(false);
-				device->ClosePort();
-			}
+		if (!(device->IsOn())) {
+			device->SetEnable(false);
+			device->SetName("УСТРОЙСТВО НЕДОСТУПЕНО!");
+			device->ClosePort();
 		}
 		else {
-			std::cout << "INCORRECT SOURCE TYPE\n";
-			device->SetEnable(false);
-			device->ClosePort();
-			return;
+			device->SetFunc(Source);
+			if (Source == VOLT) {
+				if (device->SetVolt(SourceValue)) device->SetCurrProt(ProtValue);
+				else {
+					device->SetEnable(false);
+					device->ClosePort();
+				}
+			}
+			else if (Source == CURR) {
+				if (device->SetCurr(SourceValue)) device->SetVoltProt(ProtValue);
+				else {
+					device->SetEnable(false);
+					device->ClosePort();
+				}
+			}
+			else {
+				std::cout << "INCORRECT SOURCE TYPE\n";
+				device->SetEnable(false);
+				device->ClosePort();
+				return;
+			}
+			device->SetEnable(true);
+			device->SetReadSpeed(0.01);
 		}
-		device->SetEnable(true);
-		device->SetReadSpeed(0.01);
-	}
-	return;
+	}	
 }
 
 void Stop(Keithley* obj) {
