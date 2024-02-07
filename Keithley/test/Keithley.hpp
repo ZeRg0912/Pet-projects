@@ -486,7 +486,7 @@ void Config(Keithley* device, std::string Source, float SourceValue, float ProtV
 	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
 	if (device->GetPort() == INVALID_HANDLE_VALUE) {
 		device->SetEnable(false);
-		device->SetName("ПОРТ НЕДОСТУПЕН!");
+		device->SetName("PORT UNAVALIABLE!");
 		device->ClosePort();
 		//std::cout << "Can't open COMport\n";
 		return;
@@ -495,7 +495,7 @@ void Config(Keithley* device, std::string Source, float SourceValue, float ProtV
 		device->ConfigPort();
 		if (!(device->IsOn())) {
 			device->SetEnable(false);
-			device->SetName("УСТРОЙСТВО НЕДОСТУПЕНО!");
+			device->SetName("DEVICE UNAVALIABLE!");
 			device->ClosePort();
 		}
 		else {
@@ -543,13 +543,13 @@ void Begin() {
 
 	auto RemoveCondition = [](Keithley* obj) {return !(obj->GetEnable()); };
 
-	int quantity_devices = getInput<int>("Кол - во приборов", true);
+	int quantity_devices = getInput<int>("Number of devices", true);
 
 	for (int i = 0; i < quantity_devices; i++) {
-		port = getInput<int>("Номер COM - порта (0..20)", true);
-		source = getInput<std::string>("Тип источника (Volt, Curr)", true);
-		source_value = getInput<float>("Значение источника (В, мА)");
-		prot_value = getInput<float>("Ограничение (В, мА)");
+		port = getInput<int>("Number COM - port (0..20)", true);
+		source = getInput<std::string>("Source Type (Volt, Curr)", true);
+		source_value = getInput<float>("Source value (V, mA)");
+		prot_value = getInput<float>("Protection value (V, mA)");
 		Keithley* device = new Keithley(port);
 		Config(device, source, source_value, prot_value);
 		Devices.push_back(device);
@@ -583,11 +583,11 @@ void Begin() {
 	} while (true);
 	system("cls");
 	
-	file_to_save = getInput<std::string>("Файл для сохранения", false);
+	file_to_save = getInput<std::string>("File name to save meas", false);
 	file_to_save += ".txt";
 
 	if (Devices.empty()) {
-		std::cout << "Нет доступных устройств!\n";
+		std::cout << "No avaliable devices!\n";
 	} 
 	else {
 		std::ofstream OutFile(file_to_save, std::ios_base::app);
@@ -651,7 +651,7 @@ void Begin() {
 			OutFile.close();
 		}
 		else {
-			std::cerr << "Невозможно открыть/создать файл для записи!\n";
+			std::cerr << "Can't open or create file!\n";
 		}
 		
 		Sleep(10);

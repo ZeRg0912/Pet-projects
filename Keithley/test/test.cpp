@@ -1,10 +1,10 @@
 #include <iostream>
-//#include <locale>
+#include <locale>
 #include "Keithley.hpp"
 
 int main() {
-    SetConsoleCP(CP_UTF8);
-    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
     setlocale(LC_ALL, "RUSSIAN");
     system("chcp 1251");
     system("cls");
