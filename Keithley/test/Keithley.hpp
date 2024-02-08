@@ -105,7 +105,7 @@ protected:
 	//char Command[2048] = { NULL };
 	bool enable;
 public:
-	Keithley(int port) : device(OpenPort(port)), enable(false) {
+		 Keithley(int port) : device(OpenPort(port)), enable(false) {
 		//device = OpenPort(port);
 		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);		//Получение хендла
 		CONSOLE_CURSOR_INFO cursor = { 1, false };			// Число от 1 до 100 размер курсора в процентах
@@ -113,7 +113,7 @@ public:
 		SetConsoleCursorInfo(hCons, &cursor);				//Применение заданных параметров курсора
 	}
 
-	~Keithley() {		
+		 ~Keithley() {		
 		//delete[] ReadBuffer;
 		ClosePort();
 	}
@@ -123,7 +123,7 @@ public:
 	}
 
 	void SetName(std::string NewName) {
-		PortName = NewName;
+		this->PortName = NewName;
 	}
 
 	bool GetEnable() {
@@ -142,9 +142,6 @@ public:
 	PORT OpenPort(int portName) {
 		PORT port{};
 		wsprintf(comname, TEXT("\\\\.\\COM%d"), portName);
-		//std::wstring wide_port_name(comname);
-		//port_name.resize(wide_port_name.size());
-		//std::copy(wide_port_name.begin(), wide_port_name.end(), port_name.begin());
 		PortName = "COM - Port #" + std::to_string(portName) + '\n';
 
 		// Открытие COM-порта
@@ -318,7 +315,6 @@ public:
 	bool SetVolt(float value) {
 		std::string command = ":SOUR:VOLT " + std::to_string(value) + "\n";
 		std::replace(command.begin(), command.end(), ',', '.');
-		//WriteToPort("SOUR:DEL:AUTO ON\n");
 		return WriteToPort(command.c_str());
 	}
 
@@ -327,9 +323,12 @@ public:
 		std::string command = ":SENS:CURR:RANG:AUTO ON\n";
 		WriteToPort(command.c_str());
 
-		//command = ":SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
-		//std::cout << value / 100 << std::endl;
-		//WriteToPort(command.c_str());
+		// Задать Range
+#if 0
+		command = ":SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
+		std::cout << value / 100 << std::endl;
+		WriteToPort(command.c_str());
+#endif
 
 		command = ":SENS:CURR:PROT " + std::to_string(value / 1000) + "\n";
 		std::replace(command.begin(), command.end(), ',', '.');
@@ -355,6 +354,13 @@ public:
 		std::string command = ":SENS:VOLT:RANG:AUTO ON\n";
 		WriteToPort(command.c_str());
 
+		// Задать Range
+#if 0
+		command = ":SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
+		std::cout << value / 100 << std::endl;
+		WriteToPort(command.c_str());
+#endif
+
 		command = ":SENS:VOLT:PROT " + std::to_string(value) + "\n";
 		std::replace(command.begin(), command.end(), ',', '.');
 		return WriteToPort(command.c_str());
@@ -367,19 +373,16 @@ public:
 	// Команды отображения на приборе
 	char* DisplayVolts() {
 		WriteToPort(":MEAS:VOLT?\n");
-		//ReadFromPort();
 		return ReadBuffer;
 	}
 
 	char* DisplayCurr() {
 		WriteToPort(":MEAS:CURR?\n");
-		//ReadFromPort();
 		return ReadBuffer;
 	}
 
 	// Команда чтения
 	char* ReadVolt() {
-		//Sleep(10);
 		WriteToPort(":FORM:ELEM VOLT\r");
 		WriteToPort(":SENS:FUNC 'VOLT'\r");
 		WriteToPort("READ?\n");
@@ -389,7 +392,6 @@ public:
 	}
 
 	char* ReadCurr() {
-		//Sleep(10);
 		WriteToPort(":FORM:ELEM CURR\r");
 		WriteToPort(":SENS:FUNC 'CURR'\r");
 		WriteToPort(":READ?\n");
@@ -406,15 +408,13 @@ public:
 		Sleep(100);
 	}
 
-	std::string ReadVoltCurr(long long cycle) {
+	std::string ReadVoltCurr() {
 		std::string info;
 		std::string svcc;
 		std::string sicc;
 		std::string stime;
 		float time;
 		float vcc;
-		//system("cls");
-		setcur(0, 0);
 		WriteToPort(":READ?\n");
 		ReadFromPort();
 		info = ReadBuffer;
@@ -428,7 +428,8 @@ public:
 		iss_vcc >> vcc;
 		std::stringstream iss_info;
 		//info var 1
-		/*iss_info 
+#if 0
+		iss_info 
 			<< GetNameDevice()
 			<< "Measurment #"
 			<< cycle
@@ -446,13 +447,12 @@ public:
 			<< sicc
 			<< " Ampers\n"
 			<< std::string(30, '=') 
-			<< std::endl;*/
+			<< std::endl;
+			#endif
 		//info var 2
 		iss_info
 			<< GetNameDevice()
-			<< "Measurment #"
-			<< cycle
-			<< ": \n"
+			<< ": "
 			<< "TIME: "
 			<< std::fixed
 			<< std::setprecision(3)
@@ -464,13 +464,9 @@ public:
 			<< " V || "
 			<< "Icc = "
 			<< sicc
-			<< " A  \n"
-			<< std::string(70, '=')
-			<< std::endl;
+			<< " A  \n";
 		info = iss_info.str();
-		//std::cout << iss_info.str() << std::endl;
 		memset(ReadBuffer, 0, sizeof(ReadBuffer));
-		//leep(50);
 		return info;
 	}
 
@@ -480,15 +476,12 @@ public:
 	}
 };
 
-//void Init(int numPort, std::string Source, float SourceValue, float ProtValue, int Cycles);
-
 void Config(Keithley* device, std::string Source, float SourceValue, float ProtValue) {
 	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
 	if (device->GetPort() == INVALID_HANDLE_VALUE) {
 		device->SetEnable(false);
 		device->SetName("PORT UNAVALIABLE!");
 		device->ClosePort();
-		//std::cout << "Can't open COMport\n";
 		return;
 	}
 	else {
@@ -617,7 +610,11 @@ void Begin() {
 						}
 					}
 					for (auto& obj : Devices) {
-						text = obj->ReadVoltCurr(i);
+						setcur(0, 0);
+						std::cout << "Measurment #" << i << std::endl;
+						text = obj->ReadVoltCurr();
+						if (&obj == &Devices.back()) std::cout << std::string(70, '=') << std::endl;
+						else std::cout << std::string(70, '-') << std::endl;
 						std::cout << text;
 						OutFile << text;
 						i++;
@@ -637,7 +634,11 @@ void Begin() {
 							}
 						}
 						for (auto& obj : Devices) {
-							text = obj->ReadVoltCurr(i);
+							setcur(0, 0);
+							std::cout << "Measurment #" << i << std::endl;
+							text = obj->ReadVoltCurr();
+							if (&obj == &Devices.back()) std::cout << std::string(70, '=') << std::endl;
+							else std::cout << std::string(70, '-') << std::endl;
 							std::cout << text;
 							OutFile << text;
 							Sleep(DELAY);
