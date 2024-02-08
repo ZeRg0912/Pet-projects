@@ -614,12 +614,18 @@ void Begin() {
 					for (auto& obj : Devices) {
 						setcur(0, 0);
 						std::cout << "Measurment #" << i << std::endl;
-						OutFile << "Measurment #" << i << '\n';
 						text = obj->ReadVoltCurr();
 						std::cout << text;
+						OutFile << "Measurment #" << i << '\n';
 						OutFile << text;
-						if (&obj == &Devices.back()) std::cout << std::string(100, '=') << std::endl;
-						else std::cout << std::string(100, '-') << std::endl;
+						if (&obj == &Devices.back()) {
+							std::cout << std::string(100, '=') << std::endl;
+							OutFile << std::string(100, '=') << '\n';
+						}
+						else {
+							std::cout << std::string(100, '-') << std::endl;
+							OutFile << std::string(100, '-') << '\n';
+						}
 						i++;
 						Sleep(DELAY);
 					}
@@ -639,12 +645,18 @@ void Begin() {
 						for (auto& obj : Devices) {
 							setcur(0, 0);
 							std::cout << "Measurment #" << i << std::endl;
-							OutFile << "Measurment #" << i << '\n';
 							text = obj->ReadVoltCurr();
 							std::cout << text;
+							OutFile << "Measurment #" << i << '\n';
 							OutFile << text;
-							if (&obj == &Devices.back()) std::cout << std::string(100, '=') << std::endl;
-							else std::cout << std::string(100, '-') << std::endl;
+							if (&obj == &Devices.back()) {
+								std::cout << std::string(100, '=') << std::endl;
+								OutFile << std::string(100, '=') << '\n';
+							}
+							else {
+								std::cout << std::string(100, '-') << std::endl;
+								OutFile << std::string(100, '-') << '\n';
+							}
 							Sleep(DELAY);
 						}
 					}
