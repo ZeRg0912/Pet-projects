@@ -36,7 +36,7 @@ template <typename T>
 T getInput(const std::string& hint, bool positive_only = false) {
 	T input;
 	while (true) {
-		std::cout << "Введите " << hint << ": "; 
+		std::cout << "Enter " << hint << ": "; 
 		std::cin >> input;
 		system("cls");
 		if (!std::cin.fail() && (!positive_only || (positive_only && !(std::less<T>()(input, 0))))) {
@@ -46,10 +46,10 @@ T getInput(const std::string& hint, bool positive_only = false) {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			if (positive_only) {
-				std::cout << "Ошибка ввода, пожалуйста введите корректное полоительное значение!\n";
+				std::cout << "Input error, please enter the correct positive value!\n";
 			}
 			else {
-				std::cout << "Ошибка ввода, пожалуйста введите корректное значение!\n";
+				std::cout << "Input error, please enter the correct value!\n";
 			}
 		}
 	}
@@ -61,7 +61,7 @@ std::string getInput(const std::string& hint, bool valid_command) {
 	std::string input;
 	std::vector<std::string> ValidCommands = { "VOLT", "CURR" };
 	while (true) {
-		std::cout << "Введите " << hint << ": ";
+		std::cout << "Enter " << hint << ": ";
 		std::cin >> input;
 		system("cls");
 		if (valid_command) {
@@ -73,7 +73,7 @@ std::string getInput(const std::string& hint, bool valid_command) {
 			else {
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << "Ошибка ввода, пожалуйста введите правильную комманду!\n";
+				std::cout << "Input error, please enter the correct command!\n";
 			}
 		}
 		else if (!valid_command) {
@@ -82,7 +82,7 @@ std::string getInput(const std::string& hint, bool valid_command) {
 		else {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "Ошибка ввода, пожалуйста введите правильную комманду!\n";
+			std::cout << "Input error, please enter the correct command!\n";
 		}
 	}
 	return input;
@@ -546,7 +546,7 @@ void Begin() {
 	int quantity_devices = getInput<int>("Number of devices", true);
 
 	for (int i = 0; i < quantity_devices; i++) {
-		port = getInput<int>("Number COM - port (0..20)", true);
+		port = getInput<int>("COM - port number (0..20)", true);
 		source = getInput<std::string>("Source Type (Volt, Curr)", true);
 		source_value = getInput<float>("Source value (V, mA)");
 		prot_value = getInput<float>("Protection value (V, mA)");
@@ -560,12 +560,12 @@ void Begin() {
 
 	//Select Cycles
 	do {
-		std::cout << "Выберите: конечное число измерений (num) или inf: ";
+		std::cout << "Select: finite number of dimensions (num) or inf: ";
 		std::string select_meas;
 		std::cin >> select_meas;
 		std::transform(select_meas.begin(), select_meas.end(), select_meas.begin(), ::toupper);
 		if (select_meas == "NUM") {
-			cycles = getInput<long long>("Кол - во измерений", true);
+			cycles = getInput<long long>("Number of measurements", true);
 			infinity = false;
 			break;
 		}
@@ -577,13 +577,13 @@ void Begin() {
 		else {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "Вы ввели некорректное значение!\n";
+			std::cout << "You entered an incorrect value!\n";
 
 		}
 	} while (true);
 	system("cls");
 	
-	file_to_save = getInput<std::string>("File name to save meas", false);
+	file_to_save = getInput<std::string>("The name of the file to save the measurements", false);
 	file_to_save += ".txt";
 
 	if (Devices.empty()) {
