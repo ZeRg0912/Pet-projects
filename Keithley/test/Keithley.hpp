@@ -142,7 +142,7 @@ public:
 	PORT OpenPort(int portName) {
 		PORT port{};
 		wsprintf(comname, TEXT("\\\\.\\COM%d"), portName);
-		PortName = "COM - Port #" + std::to_string(portName) + '\n';
+		PortName = "COM - Port #" + std::to_string(portName);
 
 		// Открытие COM-порта
 		return CreateFile(comname, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
@@ -343,7 +343,9 @@ public:
 	// 
 	// Установить значение тока
 	bool SetCurr(float value) {
-		std::string command = ":SOUR:CURR:RANG " + std::to_string(value / 100) + "\n";
+		std::string command = ":SOUR:CURR:RANG " + std::to_string((value / 1000) * 2) + "\n";
+		std::replace(command.begin(), command.end(), ',', '.');
+		WriteToPort(command.c_str());
 		command = ":SOUR:CURR " + std::to_string(value / 1000) + "\n";
 		std::replace(command.begin(), command.end(), ',', '.');
 		return WriteToPort(command.c_str());
@@ -600,7 +602,7 @@ void Begin() {
 			bool exit = false;
 			// infinity mode
 			if (infinity) {
-				int i = 1;
+				long long i = 1;
 				while (!exit) {
 					if (_kbhit()) {
 						switch (_getch()) {
@@ -612,11 +614,12 @@ void Begin() {
 					for (auto& obj : Devices) {
 						setcur(0, 0);
 						std::cout << "Measurment #" << i << std::endl;
+						OutFile << "Measurment #" << i << '\n';
 						text = obj->ReadVoltCurr();
-						if (&obj == &Devices.back()) std::cout << std::string(70, '=') << std::endl;
-						else std::cout << std::string(70, '-') << std::endl;
 						std::cout << text;
 						OutFile << text;
+						if (&obj == &Devices.back()) std::cout << std::string(100, '=') << std::endl;
+						else std::cout << std::string(100, '-') << std::endl;
 						i++;
 						Sleep(DELAY);
 					}
@@ -636,11 +639,12 @@ void Begin() {
 						for (auto& obj : Devices) {
 							setcur(0, 0);
 							std::cout << "Measurment #" << i << std::endl;
+							OutFile << "Measurment #" << i << '\n';
 							text = obj->ReadVoltCurr();
-							if (&obj == &Devices.back()) std::cout << std::string(70, '=') << std::endl;
-							else std::cout << std::string(70, '-') << std::endl;
 							std::cout << text;
 							OutFile << text;
+							if (&obj == &Devices.back()) std::cout << std::string(100, '=') << std::endl;
+							else std::cout << std::string(100, '-') << std::endl;
 							Sleep(DELAY);
 						}
 					}
