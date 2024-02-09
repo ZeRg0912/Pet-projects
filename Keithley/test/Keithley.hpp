@@ -174,17 +174,21 @@ public:
 		DWORD status;
 		if (!WriteFile(device, command.c_str(), strlen(command.c_str()), &status, NULL)) {
 			std::cout << "BAD\n";
+			ReadFromPort();
 			return false;
 		}
 		Sleep(10);
 		char responce[1024];
 		if (!ReadFile(device, responce, sizeof(responce), &bytesRead, NULL)) {
 			std::cout << "BAD\n";
+			ReadFromPort();
 			return false;
 		}
 		if (bytesRead > 0) {
+			ReadFromPort();
 			return true;
 		}
+		ReadFromPort();
 		return false;
 	}
 
@@ -603,7 +607,7 @@ void Begin() {
 					OutFile << "Measurment #" << i << '\n';
 					if (!Devices.empty()) {
 						for (auto& obj : Devices) {
-							if (obj->WriteToPort(":READ?\n")) {
+							if (obj->IsOn()) {
 								text = obj->ReadVoltCurr();
 								std::cout << text;
 								OutFile << text;
