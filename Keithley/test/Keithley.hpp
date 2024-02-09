@@ -134,6 +134,17 @@ public:
 		return device;
 	}
 
+	bool CheckPort() {
+		DWORD dwModemStatus;
+		if (!GetCommModemStatus(device, &dwModemStatus)) {
+			return false;
+		}
+		if (dwModemStatus & MS_RLSD_ON) {
+			return true;
+		}
+		else { return false; }
+	}
+
 	std::string GetNameDevice() {
 		return PortName;
 	}
@@ -172,11 +183,15 @@ public:
 	bool IsOn() {
 		std::string command = "*IDN?\n";
 		DWORD status;
-		WriteFile(device, command.c_str(), strlen(command.c_str()), &status, NULL);
+		if (!WriteFile(device, command.c_str(), strlen(command.c_str()), &status, NULL)) {
+			return false;
+		}
 		Sleep(50);
-		char responce[256];
+		char responce[1024];
 		DWORD bytesRead;
-		ReadFile(device, responce, sizeof(responce), &bytesRead, NULL);
+		if (!ReadFile(device, responce, sizeof(responce), &bytesRead, NULL)) {
+				return false;
+		}
 		if (bytesRead > 0) {
 			return true;
 		}
@@ -611,24 +626,33 @@ void Begin() {
 							break;
 						}
 					}
+					setcur(0, 0);
+					std::cout << "Measurment #" << i << std::endl;
+					OutFile << "Measurment #" << i << '\n';
 					for (auto& obj : Devices) {
-						setcur(0, 0);
-						std::cout << "Measurment #" << i << std::endl;
-						text = obj->ReadVoltCurr();
-						std::cout << text;
-						OutFile << "Measurment #" << i << '\n';
-						OutFile << text;
-						if (&obj == &Devices.back()) {
-							std::cout << std::string(100, '=') << std::endl;
-							OutFile << std::string(100, '=') << '\n';
+						if (obj->CheckPort()) {
+							text = obj->ReadVoltCurr();
+							std::cout << text;
+							OutFile << text;
+							if (&obj == &Devices.back()) {
+								std::cout << std::string(100, '=') << std::endl;
+								OutFile << std::string(100, '=') << '\n';
+							}
+							else {
+								std::cout << std::string(100, '-') << std::endl;
+								OutFile << std::string(100, '-') << '\n';
+							}
 						}
-						else {
-							std::cout << std::string(100, '-') << std::endl;
-							OutFile << std::string(100, '-') << '\n';
+						else { 
+							obj->SetEnable(false); 
+							obj->ClosePort();
+							Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
+							Devices.shrink_to_fit();
+							system("cls");
 						}
-						i++;
-						Sleep(DELAY);
 					}
+					i++;
+					Sleep(DELAY);
 				}
 			}
 			// cycles mode
@@ -642,23 +666,29 @@ void Begin() {
 								break;
 							}
 						}
+						setcur(0, 0);
+						std::cout << "Measurment #" << i << std::endl;
+						OutFile << "Measurment #" << i << '\n';
 						for (auto& obj : Devices) {
-							setcur(0, 0);
-							std::cout << "Measurment #" << i << std::endl;
-							text = obj->ReadVoltCurr();
-							std::cout << text;
-							OutFile << "Measurment #" << i << '\n';
-							OutFile << text;
-							if (&obj == &Devices.back()) {
-								std::cout << std::string(100, '=') << std::endl;
-								OutFile << std::string(100, '=') << '\n';
+							if (obj->CheckPort()) {
+								text = obj->ReadVoltCurr();
+								std::cout << text;
+								OutFile << text;
+								if (&obj == &Devices.back()) {
+									std::cout << std::string(100, '=') << std::endl;
+									OutFile << std::string(100, '=') << '\n';
+								}
+								else {
+									std::cout << std::string(100, '-') << std::endl;
+									OutFile << std::string(100, '-') << '\n';
+								}
 							}
 							else {
-								std::cout << std::string(100, '-') << std::endl;
-								OutFile << std::string(100, '-') << '\n';
+								obj->SetEnable(false);
+								obj->ClosePort();
 							}
-							Sleep(DELAY);
 						}
+						Sleep(DELAY);
 					}
 					else {
 						break;
@@ -678,10 +708,9 @@ void Begin() {
 	}	
 
 	//Clear vector of devices
-	if (!Devices.empty()) {
-		for (Keithley* element : Devices) {
-			delete element;
-		}
+	//Devices.erase(std::remove(Devices.begin(), Devices.end(), nullptr));
+	for (auto obj : Devices) {
+		delete obj;
 	}
 	Devices.clear();
 	system("pause");

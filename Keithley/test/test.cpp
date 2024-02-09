@@ -3,9 +3,9 @@
 #include "Keithley.hpp"
 
 int main() {
-    SetConsoleCP(1251);
-    SetConsoleOutputCP(1251);
-    setlocale(LC_ALL, "RUSSIAN");
+    //SetConsoleCP(1251);
+    //SetConsoleOutputCP(1251);
+    //setlocale(LC_ALL, "RUSSIAN");
     system("chcp 1251");
     system("cls");
 
