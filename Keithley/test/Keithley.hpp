@@ -104,6 +104,8 @@ protected:
 	char ReadBuffer[2048] = { NULL };
 	//char Command[2048] = { NULL };
 	bool enable;
+	DWORD bytesWritten;
+	DWORD bytesRead;
 public:
 		 Keithley(int port) : device(OpenPort(port)), enable(false) {
 		//device = OpenPort(port);
@@ -134,14 +136,6 @@ public:
 		return device;
 	}
 
-	bool CheckPort() {
-		DWORD dwModemStatus;
-		if (!GetCommModemStatus(device, &dwModemStatus)) {
-			return false;
-		}
-		return (dwModemStatus & MS_RLSD_ON);			
-	}
-
 	std::string GetNameDevice() {
 		return PortName;
 	}
@@ -162,24 +156,12 @@ public:
 
 	// Команда записи
 	bool WriteToPort(std::string command) {
-		DWORD bytesWritten;
 		return WriteFile(device, command.c_str(), strlen(command.c_str()), &bytesWritten, NULL);
 	}
 
 	// Команда чтения
 	bool ReadFromPort() {
-		DWORD bytesRead;
-		if (!ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL)) {
-			DWORD dwError = GetLastError();
-			if (dwError == ERROR_IO_PENDING) {
-				return true;
-			}
-			else {
-				ClosePort();
-				return false;
-			}
-		}
-		return true;
+		return ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
 	}
 
 
@@ -191,19 +173,17 @@ public:
 		std::string command = "*IDN?\n";
 		DWORD status;
 		if (!WriteFile(device, command.c_str(), strlen(command.c_str()), &status, NULL)) {
+			std::cout << "BAD\n";
 			return false;
 		}
-		Sleep(50);
+		Sleep(10);
 		char responce[1024];
-		DWORD bytesRead;
 		if (!ReadFile(device, responce, sizeof(responce), &bytesRead, NULL)) {
+			std::cout << "BAD\n";
 			return false;
 		}
 		if (bytesRead > 0) {
-			std::string responce_str(responce, bytesRead);
-			if (!responce_str.empty()) {
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
@@ -409,24 +389,6 @@ public:
 	}
 
 	// Команда чтения
-	char* ReadVolt() {
-		WriteToPort(":FORM:ELEM VOLT\r");
-		WriteToPort(":SENS:FUNC 'VOLT'\r");
-		WriteToPort("READ?\n");
-		ReadFromPort();
-		Sleep(20);
-		return ReadBuffer;
-	}
-
-	char* ReadCurr() {
-		WriteToPort(":FORM:ELEM CURR\r");
-		WriteToPort(":SENS:FUNC 'CURR'\r");
-		WriteToPort(":READ?\n");
-		ReadFromPort();
-		Sleep(20);
-		return ReadBuffer;
-	}
-
 	void SetMeas() {
 		this->ResetTime();
 		WriteToPort(":FORM:ELEM VOLT, CURR, TIME\n");
@@ -442,12 +404,12 @@ public:
 		std::string stime;
 		float time;
 		float vcc;
-		WriteToPort(":READ?\n");
 		ReadFromPort();
 		info = ReadBuffer;
 		svcc = info.substr(0, 13);
 		sicc = info.substr(14, 13);
 		stime = info.substr(28, 13);
+
 
 		std::istringstream iss_time(stime);
 		iss_time >> time;
@@ -491,7 +453,7 @@ public:
 			<< " V || "
 			<< "Icc = "
 			<< sicc
-			<< " A  \n";
+			<< " A          \n";
 		info = iss_info.str();
 		memset(ReadBuffer, 0, sizeof(ReadBuffer));
 		return info;
@@ -617,7 +579,7 @@ void Begin() {
 			obj->OutputOn();
 		}
 
-		Sleep(300);
+		Sleep(200);
 
 		for (auto& obj : Devices) {
 			obj->SetMeas();
@@ -639,32 +601,35 @@ void Begin() {
 					setcur(0, 0);
 					std::cout << "Measurment #" << i << std::endl;
 					OutFile << "Measurment #" << i << '\n';
-					for (auto& obj : Devices) {
-						if (obj->IsOn()) {
-							text = obj->ReadVoltCurr();
-							std::cout << text;
-							OutFile << text;
-							if (&obj == &Devices.back()) {
-								std::cout << std::string(100, '=') << std::endl;
-								OutFile << std::string(100, '=') << '\n';
+					if (!Devices.empty()) {
+						for (auto& obj : Devices) {
+							if (obj->WriteToPort(":READ?\n")) {
+								text = obj->ReadVoltCurr();
+								std::cout << text;
+								OutFile << text;
+								if (&obj == &Devices.back()) {
+									std::cout << std::string(80, '=') << std::endl;
+									OutFile << std::string(80, '=') << '\n';
+								}
+								else {
+									std::cout << std::string(80, '-') << std::endl;
+									OutFile << std::string(80, '-') << '\n';
+								}
 							}
 							else {
-								std::cout << std::string(100, '-') << std::endl;
-								OutFile << std::string(100, '-') << '\n';
+								obj->SetEnable(false);
+								obj->ClosePort();
+								Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
+								Devices.shrink_to_fit();
 							}
 						}
-						else {
-							obj->SetEnable(false);
-							obj->ClosePort();
-							delete obj;
-							continue;
-						}
+						i++;
+						Sleep(DELAY);
 					}
-					Devices.erase(std::remove_if(Devices.begin(), Devices.end(), [](auto& obj) {return !obj->GetEnable(); }), Devices.end());
-					Devices.shrink_to_fit();
-					std::cout << Devices.size() << std::endl;
-					i++;
-					Sleep(DELAY);
+					else {
+						std::cout << "No avaliable devices!\n";
+						break;
+					}
 				}
 			}
 			// cycles mode
@@ -682,7 +647,7 @@ void Begin() {
 						std::cout << "Measurment #" << i << std::endl;
 						OutFile << "Measurment #" << i << '\n';
 						for (auto& obj : Devices) {
-							if (obj->CheckPort()) {
+							if (obj->WriteToPort(":READ?\n")) {
 								text = obj->ReadVoltCurr();
 								std::cout << text;
 								OutFile << text;
@@ -700,7 +665,7 @@ void Begin() {
 								obj->ClosePort();
 							}
 						}
-						Sleep(DELAY);
+						Sleep(DELAY - 100);
 					}
 					else {
 						break;

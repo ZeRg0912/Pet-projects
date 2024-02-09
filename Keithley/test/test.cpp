@@ -10,6 +10,15 @@ int main() {
     system("cls");
 
     Begin();
+    /*Keithley a(14);
+    while (true) {
+        if (a.IsOn()) {
+            std::cout << "GOOD\n";
+        }
+        else {
+            std::cout << "BAD\n";
+        }
+    }*/
 
     return 0;
 }
