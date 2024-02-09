@@ -139,10 +139,7 @@ public:
 		if (!GetCommModemStatus(device, &dwModemStatus)) {
 			return false;
 		}
-		if (dwModemStatus & MS_RLSD_ON) {
-			return true;
-		}
-		else { return false; }
+		return (dwModemStatus & MS_RLSD_ON);			
 	}
 
 	std::string GetNameDevice() {
@@ -172,7 +169,17 @@ public:
 	// Команда чтения
 	bool ReadFromPort() {
 		DWORD bytesRead;
-		return ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+		if (!ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL)) {
+			DWORD dwError = GetLastError();
+			if (dwError == ERROR_IO_PENDING) {
+				return true;
+			}
+			else {
+				ClosePort();
+				return false;
+			}
+		}
+		return true;
 	}
 
 
@@ -190,10 +197,13 @@ public:
 		char responce[1024];
 		DWORD bytesRead;
 		if (!ReadFile(device, responce, sizeof(responce), &bytesRead, NULL)) {
-				return false;
+			return false;
 		}
 		if (bytesRead > 0) {
-			return true;
+			std::string responce_str(responce, bytesRead);
+			if (!responce_str.empty()) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -630,7 +640,7 @@ void Begin() {
 					std::cout << "Measurment #" << i << std::endl;
 					OutFile << "Measurment #" << i << '\n';
 					for (auto& obj : Devices) {
-						if (obj->CheckPort()) {
+						if (obj->IsOn()) {
 							text = obj->ReadVoltCurr();
 							std::cout << text;
 							OutFile << text;
@@ -643,14 +653,16 @@ void Begin() {
 								OutFile << std::string(100, '-') << '\n';
 							}
 						}
-						else { 
-							obj->SetEnable(false); 
+						else {
+							obj->SetEnable(false);
 							obj->ClosePort();
-							Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
-							Devices.shrink_to_fit();
-							system("cls");
+							delete obj;
+							continue;
 						}
 					}
+					Devices.erase(std::remove_if(Devices.begin(), Devices.end(), [](auto& obj) {return !obj->GetEnable(); }), Devices.end());
+					Devices.shrink_to_fit();
+					std::cout << Devices.size() << std::endl;
 					i++;
 					Sleep(DELAY);
 				}
