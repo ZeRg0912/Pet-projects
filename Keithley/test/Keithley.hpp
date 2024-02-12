@@ -24,13 +24,24 @@
 #define CURR "CURR"
 #define RES "RES"
 
-#define DELAY 1000
+#define DELAY 50
 
 #if defined(max)
 #undef max
 #endif
 
 typedef HANDLE PORT;
+
+void ClearScreen() {
+	HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);   //Получение хендла
+	CONSOLE_CURSOR_INFO cursor = { 1, false };   // Число от 1 до 100 размер курсора в процентах
+	// false\true - видимость
+	SetConsoleCursorInfo(hCons, &cursor);  //Применение заданных параметров курсора
+	COORD coord;
+	coord.X = 0;
+	coord.Y = 0;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
 
 template <typename T>
 T getInput(const std::string& hint, bool positive_only = false) {
@@ -88,44 +99,35 @@ std::string getInput(const std::string& hint, bool valid_command) {
 	return input;
 }
 
-void setcur(int x, int y)//установка курсора на позицию  x y
-{
-	COORD coord;
-	coord.X = x;
-	coord.Y = y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-};
-
 class Keithley {
 protected:
-	TCHAR comname[100];
-	std::string PortName;
 	PORT device;
-	char ReadBuffer[2048] = { NULL };
-	//char Command[2048] = { NULL };
+	std::string port_name;
+	char read_buffer[2048] = { NULL };
+
+	std::string info;
+	
 	bool enable;
-	DWORD bytesWritten;
-	DWORD bytesRead;
+
+	TCHAR comname[100];
+	DWORD bytes_written;
+	DWORD bytes_read;
 public:
-		 Keithley(int port) : device(OpenPort(port)), enable(false) {
+		 Keithley(int port) : device(OpenPort(port)), enable(false), port_name("COM - Port #" + std::to_string(port)) {
 		//device = OpenPort(port);
-		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);		//Получение хендла
-		CONSOLE_CURSOR_INFO cursor = { 1, false };			// Число от 1 до 100 размер курсора в процентах
-		// false\true - видимость
-		SetConsoleCursorInfo(hCons, &cursor);				//Применение заданных параметров курсора
-	}
+		}
 
 		 ~Keithley() {		
-		//delete[] ReadBuffer;
+		//delete[] read_buffer;
 		ClosePort();
 	}
 
 	void SetEnable(bool value) {
-		this->enable = value;
+		enable = value;
 	}
 
 	void SetName(std::string NewName) {
-		this->PortName = NewName;
+		port_name = NewName;
 	}
 
 	bool GetEnable() {
@@ -136,15 +138,17 @@ public:
 		return device;
 	}
 
+	std::string GetInfo() {
+		return this->info;
+	}
+
 	std::string GetNameDevice() {
-		return PortName;
+		return port_name;
 	}
 
 	// Открыть порт
 	PORT OpenPort(int portName) {
-		PORT port{};
 		wsprintf(comname, TEXT("\\\\.\\COM%d"), portName);
-		PortName = "COM - Port #" + std::to_string(portName);
 
 		// Открытие COM-порта
 		return CreateFile(comname, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
@@ -156,12 +160,19 @@ public:
 
 	// Команда записи
 	bool WriteToPort(std::string command) {
-		return WriteFile(device, command.c_str(), strlen(command.c_str()), &bytesWritten, NULL);
+		return WriteFile(device, command.c_str(), strlen(command.c_str()), &bytes_written, NULL);
 	}
 
 	// Команда чтения
 	bool ReadFromPort() {
-		return ReadFile(device, ReadBuffer, sizeof(ReadBuffer), &bytesRead, NULL);
+		if (!ReadFile(device, read_buffer, sizeof(read_buffer), &bytes_read, NULL)) {
+			return false;
+		}
+		if (bytes_read > 0) {
+			return true;
+		}
+		return false;
+		//return ReadFile(device, read_buffer, sizeof(read_buffer), &bytes_read, NULL);
 	}
 
 
@@ -170,22 +181,17 @@ public:
 
 	// Проверка вкл устройства
 	bool IsOn() {
-		std::string command = "*IDN?\n";
+		std::string command = "*OPT?\n";
 		DWORD status;
 		if (!WriteFile(device, command.c_str(), strlen(command.c_str()), &status, NULL)) {
-			std::cout << "BAD\n";
-			ReadFromPort();
 			return false;
 		}
-		Sleep(10);
-		char responce[1024];
-		if (!ReadFile(device, responce, sizeof(responce), &bytesRead, NULL)) {
-			std::cout << "BAD\n";
-			ReadFromPort();
+		//Sleep(10);
+		char responce[2048];
+		if (!ReadFile(device, responce, sizeof(responce), &bytes_read, NULL)) {
 			return false;
 		}
-		if (bytesRead > 0) {
-			ReadFromPort();
+		if (bytes_read > 0) {
 			return true;
 		}
 		ReadFromPort();
@@ -210,7 +216,17 @@ public:
 		if (!SetCommState(device, &dcb)) {
 			return false;
 		}
-		return true;
+
+		/*COMMTIMEOUTS timeouts = { 0 };
+		timeouts.ReadIntervalTimeout = 30;
+		timeouts.ReadTotalTimeoutConstant = 30;
+		timeouts.ReadTotalTimeoutMultiplier = 1;
+		timeouts.WriteTotalTimeoutConstant = 30;
+		timeouts.WriteTotalTimeoutMultiplier = 1;
+		if (!SetCommTimeouts(device, &timeouts)) {
+			return false;
+		}
+		return true;*/
 	}
 
 	bool SetBaudRate(int BaudRate) {
@@ -335,7 +351,7 @@ public:
 		// Задать Range
 #if 0
 		command = ":SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
-		std::cout << value / 100 << std::endl;
+		std::cout << value / 100 << '\n';
 		WriteToPort(command.c_str());
 #endif
 
@@ -368,7 +384,7 @@ public:
 		// Задать Range
 #if 0
 		command = ":SENS:CURR:RANG" + std::to_string(value / 500) + "\n";
-		std::cout << value / 100 << std::endl;
+		std::cout << value / 100 << '\n';
 		WriteToPort(command.c_str());
 #endif
 
@@ -384,12 +400,12 @@ public:
 	// Команды отображения на приборе
 	char* DisplayVolts() {
 		WriteToPort(":MEAS:VOLT?\n");
-		return ReadBuffer;
+		return read_buffer;
 	}
 
 	char* DisplayCurr() {
 		WriteToPort(":MEAS:CURR?\n");
-		return ReadBuffer;
+		return read_buffer;
 	}
 
 	// Команда чтения
@@ -398,18 +414,18 @@ public:
 		WriteToPort(":FORM:ELEM VOLT, CURR, TIME\n");
 		WriteToPort(":SENSE:FUNC 'VOLT', 'CURR'\n");
 		WriteToPort(":READ?\n");
-		Sleep(100);
+		Sleep(30);
 	}
 
-	std::string ReadVoltCurr() {
-		std::string info;
+	bool ReadVoltCurr() {
 		std::string svcc;
 		std::string sicc;
 		std::string stime;
 		float time;
 		float vcc;
-		ReadFromPort();
-		info = ReadBuffer;
+		if (!WriteToPort(":READ?\n")) return false;
+		if (!ReadFromPort()) return false;
+		info = read_buffer;
 		svcc = info.substr(0, 13);
 		sicc = info.substr(14, 13);
 		stime = info.substr(28, 13);
@@ -422,7 +438,7 @@ public:
 		std::stringstream iss_info;
 		//info var 1
 #if 0
-		iss_info 
+		iss_info
 			<< GetNameDevice()
 			<< "Measurment #"
 			<< cycle
@@ -439,9 +455,9 @@ public:
 			<< "Icc = "
 			<< sicc
 			<< " Ampers\n"
-			<< std::string(30, '=') 
-			<< std::endl;
-			#endif
+			<< std::string(30, '=')
+			<< '\n';
+#endif
 		//info var 2
 		iss_info
 			<< GetNameDevice()
@@ -459,8 +475,8 @@ public:
 			<< sicc
 			<< " A          \n";
 		info = iss_info.str();
-		memset(ReadBuffer, 0, sizeof(ReadBuffer));
-		return info;
+		memset(read_buffer, 0, sizeof(read_buffer));
+		return true;
 	}
 
 	// Закрыть порт
@@ -469,7 +485,7 @@ public:
 	}
 };
 
-void Config(Keithley* device, std::string Source, float SourceValue, float ProtValue) {
+void Config(Keithley* device, std::string& Source, float& SourceValue, float& ProtValue) {
 	transform(Source.begin(), Source.end(), Source.begin(), ::toupper);
 	if (device->GetPort() == INVALID_HANDLE_VALUE) {
 		device->SetEnable(false);
@@ -538,11 +554,11 @@ void Begin() {
 		prot_value = getInput<float>("Protection value (V, mA)");
 		Keithley* device = new Keithley(port);
 		Config(device, source, source_value, prot_value);
-		Devices.push_back(device);
+		if (device->GetEnable() == true) Devices.push_back(device);
 	}
 
-	Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
-	Devices.shrink_to_fit();
+	/*Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
+	Devices.shrink_to_fit();*/
 
 	//Select Cycles
 	do {
@@ -564,7 +580,6 @@ void Begin() {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::cout << "You entered an incorrect value!\n";
-
 		}
 	} while (true);
 	system("cls");
@@ -583,7 +598,7 @@ void Begin() {
 			obj->OutputOn();
 		}
 
-		Sleep(200);
+		Sleep(50);
 
 		for (auto& obj : Devices) {
 			obj->SetMeas();
@@ -602,29 +617,30 @@ void Begin() {
 							break;
 						}
 					}
-					setcur(0, 0);
-					std::cout << "Measurment #" << i << std::endl;
+					Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
+					Devices.shrink_to_fit();
+					ClearScreen();
+					std::cout << "Measurment #" << i << '\n';
 					OutFile << "Measurment #" << i << '\n';
 					if (!Devices.empty()) {
 						for (auto& obj : Devices) {
-							if (obj->IsOn()) {
-								text = obj->ReadVoltCurr();
-								std::cout << text;
-								OutFile << text;
+							if (obj->ReadVoltCurr() && obj->GetEnable() == true) {
+								std::cout << obj->GetInfo();
+								OutFile << obj->GetInfo();
 								if (&obj == &Devices.back()) {
-									std::cout << std::string(80, '=') << std::endl;
+									std::cout << std::string(80, '=') << '\n';
 									OutFile << std::string(80, '=') << '\n';
 								}
 								else {
-									std::cout << std::string(80, '-') << std::endl;
+									std::cout << std::string(80, '-') << '\n';
 									OutFile << std::string(80, '-') << '\n';
 								}
 							}
 							else {
+								system("cls");
 								obj->SetEnable(false);
-								obj->ClosePort();
-								Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
-								Devices.shrink_to_fit();
+								//obj->ClosePort();
+								//if (Devices.empty()) break;
 							}
 						}
 						i++;
@@ -647,29 +663,38 @@ void Begin() {
 								break;
 							}
 						}
-						setcur(0, 0);
-						std::cout << "Measurment #" << i << std::endl;
+						Devices.erase(std::remove_if(Devices.begin(), Devices.end(), RemoveCondition), Devices.end());
+						Devices.shrink_to_fit();
+						ClearScreen();
+						std::cout << "Measurment #" << i << '\n';
 						OutFile << "Measurment #" << i << '\n';
-						for (auto& obj : Devices) {
-							if (obj->WriteToPort(":READ?\n")) {
-								text = obj->ReadVoltCurr();
-								std::cout << text;
-								OutFile << text;
-								if (&obj == &Devices.back()) {
-									std::cout << std::string(100, '=') << std::endl;
-									OutFile << std::string(100, '=') << '\n';
+						if (!Devices.empty()) {
+							for (auto& obj : Devices) {
+								if (obj->ReadVoltCurr() && obj->GetEnable() == true) {
+									std::cout << obj->GetInfo();
+									OutFile << obj->GetInfo();
+									if (&obj == &Devices.back()) {
+										std::cout << std::string(80, '=') << '\n';
+										OutFile << std::string(80, '=') << '\n';
+									}
+									else {
+										std::cout << std::string(80, '-') << '\n';
+										OutFile << std::string(80, '-') << '\n';
+									}
 								}
 								else {
-									std::cout << std::string(100, '-') << std::endl;
-									OutFile << std::string(100, '-') << '\n';
+									system("cls");
+									obj->SetEnable(false);
+									//obj->ClosePort();
+									//if (Devices.empty()) break;
 								}
 							}
-							else {
-								obj->SetEnable(false);
-								obj->ClosePort();
-							}
+							Sleep(DELAY);
 						}
-						Sleep(DELAY - 100);
+						else {
+							std::cout << "No avaliable devices!\n";
+							break;
+						}
 					}
 					else {
 						break;

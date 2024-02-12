@@ -10,13 +10,15 @@ int main() {
     system("cls");
 
     Begin();
-    /*Keithley a(14);
-    while (true) {
-        if (a.IsOn()) {
-            std::cout << "GOOD\n";
+
+    //Keithley dev(13);
+
+    /*while (true) {
+        if (dev.ReadVoltCurr()) {
+            std::cout << "true\n";
         }
         else {
-            std::cout << "BAD\n";
+            std::cout << "false\n";
         }
     }*/
 
