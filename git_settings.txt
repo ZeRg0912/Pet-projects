@@ -1,3 +1,0 @@
-git config --global http.postbuffer 524288000
-git config --global http.version HTTP/1.1
-git pull/clone --depth=1
