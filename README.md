@@ -1,1 +1,1 @@
-# Microsoft Visual Studio PROJECTS
+# Pet projects
